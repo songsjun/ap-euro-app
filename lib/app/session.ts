@@ -33,18 +33,18 @@ export class TopicSessionManager {
 
     if (command.type === 'COMPLETE_RESOURCE') {
       const completion = this._buildCompletion(userId, command.resourceId, command.result)
-      let unlockTriggered = false
+
+      // Build snapshot before the transaction — transact() only covers completions+topic_unlocks,
+      // and _buildSnapshot() also reads resources which would throw inside that transaction.
+      const snapshot = await this._buildSnapshot()
+      const updatedCompletions = new Map(snapshot.completions)
+      updatedCompletions.set(command.resourceId, completion)
+      const allADone = snapshot.aResources.every(r => updatedCompletions.has(r.id))
 
       await repo.transact(async () => {
         await repo.saveCompletion(completion)
-        // Check if this completion finishes all A-layer resources
-        const snapshot = await this._buildSnapshot()
-        const updatedCompletions = new Map(snapshot.completions)
-        updatedCompletions.set(command.resourceId, completion)
-        const allADone = snapshot.aResources.every(r => updatedCompletions.has(r.id))
         if (allADone) {
           await handleTopicComplete(userId, sectionId, repo)
-          unlockTriggered = true
         }
       })
 

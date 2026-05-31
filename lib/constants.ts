@@ -1,4 +1,4 @@
-export const CONTENT_VERSION = '1.0.0'
+export const CONTENT_VERSION = '1.1.0'
 export const UNITS = 9
 export const ESSAY_PASS_THRESHOLD = 0.6   // ≥60% on DBQ/LEQ/SAQ counts as passed
 

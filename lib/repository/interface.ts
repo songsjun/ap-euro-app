@@ -2,7 +2,7 @@ import type { Resource, TopicMeta, Completion, TopicUnlock } from '@/lib/types'
 
 export interface IRepository {
   // Resources
-  getTopicResources(unit: number, topicId: string, layer: 'A' | 'B'): Promise<Resource[]>
+  getTopicResources(unit: number, topicId: string, layer: 'A' | 'B' | 'C'): Promise<Resource[]>
   getUnitEndResources(unit: number): Promise<Resource[]>
   getResourcesByTiming(timing: Resource['timing']): Promise<Resource[]>
   getAllResources(): Promise<Resource[]>

@@ -36,23 +36,37 @@ function isVideoResource(r: Resource): boolean {
   return r.type.startsWith('video')
 }
 
+function resolveResourceUrl(r: Resource): string | null {
+  if (!r.url) return null
+  if (r.url.startsWith('local://')) {
+    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    return null
+  }
+  return r.url
+}
+
 function duration(resourceId: string): string | null {
   return vm[resourceId]?.duration ?? null
 }
 
 const TYPE_LABEL: Record<string, string> = {
-  video_topic: '视频',
-  video_review: '复习视频',
-  video_deep_dive: '深度视频',
+  video_intro: '导读视频',
+  video_topic: '主讲视频',
+  video_supplement: '深度视频',
+  video_memorization: '记忆视频',
+  video_unit_review: 'Unit 复习',
   reading_textbook: '教材',
   study_guide: '学习指南',
   note_guide: '笔记模板',
   practice_mcq: 'MCQ 练习',
-  practice_set: '综合练习',
   frq_practice: 'FRQ 练习',
-  dbq: 'DBQ',
-  leq: 'LEQ',
-  saq: 'SAQ',
+  primary_source: '一手史料',
+  writing_skill: '写作技能',
+  mcq_strategy: 'MCQ 策略',
+  exam_review: '考前复习',
+  practice_exam: '模拟考试',
+  review_flashcard: '闪卡',
+  reference: '参考文档',
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────────
@@ -61,7 +75,7 @@ function ResourceItem({ r }: { r: Resource }) {
   const meta = SOURCE_META[r.source]
   const isVideo = isVideoResource(r)
   const dur = duration(r.id)
-  const isLocal = r.url?.startsWith('local://')
+  const resolvedUrl = resolveResourceUrl(r)
   const typeLabel = TYPE_LABEL[r.type] ?? r.type
 
   return (
@@ -69,12 +83,18 @@ function ResourceItem({ r }: { r: Resource }) {
       {/* Type + duration badge */}
       <div className="flex flex-col items-center gap-1 shrink-0 w-16 pt-0.5">
         <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded w-full text-center ${
-          isVideo
+          r.type === 'video_intro'
+            ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
+            : r.type === 'video_memorization'
+            ? 'bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400'
+            : isVideo
             ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
             : r.type === 'reading_textbook'
             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
             : r.type === 'study_guide'
             ? 'bg-pink-50 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400'
+            : r.type === 'note_guide'
+            ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400'
             : 'bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400'
         }`}>
           {typeLabel}
@@ -82,17 +102,20 @@ function ResourceItem({ r }: { r: Resource }) {
         {isVideo && dur && (
           <span className="text-[10px] text-stone-400 dark:text-stone-500 font-mono">{dur}</span>
         )}
+        {r.type === 'reading_textbook' && r.textbook_page && (
+          <span className="text-[10px] text-blue-500 dark:text-blue-400 font-mono">p.{r.textbook_page}</span>
+        )}
       </div>
 
       {/* Title + source */}
       <div className="flex-1 min-w-0">
-        {isLocal || !r.url ? (
-          <p className="text-sm text-stone-700 dark:text-stone-300 leading-snug">{r.title}</p>
-        ) : (
-          <a href={r.url} target="_blank" rel="noopener noreferrer"
+        {resolvedUrl ? (
+          <a href={resolvedUrl} target="_blank" rel="noopener noreferrer"
             className="text-sm text-stone-800 dark:text-stone-200 hover:underline leading-snug">
             {r.title}
           </a>
+        ) : (
+          <p className="text-sm text-stone-700 dark:text-stone-300 leading-snug">{r.title}</p>
         )}
         <p className={`text-xs mt-0.5 ${meta?.color ?? 'text-stone-400 dark:text-stone-500'}`}>
           {meta?.label ?? r.source}
@@ -112,6 +135,8 @@ function ResourceItem({ r }: { r: Resource }) {
         <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
           r.layer === 'A'
             ? 'border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400'
+            : r.layer === 'C'
+            ? 'border-teal-200 text-teal-600 dark:border-teal-800 dark:text-teal-400'
             : 'border-stone-200 text-stone-400 dark:border-stone-700'
         }`}>
           {r.layer} 层
@@ -201,6 +226,7 @@ export default function ResourceGuidePage() {
 
                   const aRes = resources.filter(r => r.layer === 'A')
                   const bRes = resources.filter(r => r.layer === 'B')
+                  const cRes = resources.filter(r => r.layer === 'C')
 
                   return (
                     <div key={topicNode.name} className="border border-stone-200 dark:border-stone-700 rounded-xl overflow-hidden">
@@ -234,6 +260,7 @@ export default function ResourceGuidePage() {
                           <>
                             <SectionBlock title="必做资源 (A 层)" resources={aRes} />
                             <SectionBlock title="补充资源 (B 层)" resources={bRes} />
+                            <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
                           </>
                         )}
                       </div>
@@ -247,6 +274,7 @@ export default function ResourceGuidePage() {
                   if (reviewRes.length === 0) return null
                   const aRes = reviewRes.filter(r => r.layer === 'A')
                   const bRes = reviewRes.filter(r => r.layer === 'B')
+                  const cRes = reviewRes.filter(r => r.layer === 'C')
                   const label = unitReviewNode?.name ?? `Unit ${unitNum} Review`
                   return (
                     <div className="border border-indigo-200 dark:border-indigo-800 rounded-xl overflow-hidden">
@@ -260,6 +288,7 @@ export default function ResourceGuidePage() {
                       <div className="px-4 py-2">
                         <SectionBlock title="必做资源 (A 层)" resources={aRes} />
                         <SectionBlock title="补充资源 (B 层)" resources={bRes} />
+                        <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
                       </div>
                     </div>
                   )
@@ -279,6 +308,7 @@ export default function ResourceGuidePage() {
           if (resources.length === 0) return null
           const aRes = resources.filter(r => r.layer === 'A')
           const bRes = resources.filter(r => r.layer === 'B')
+          const cRes = resources.filter(r => r.layer === 'C')
           return (
             <section key={key}>
               <div className="flex items-center gap-3 mb-4">
@@ -292,6 +322,7 @@ export default function ResourceGuidePage() {
                 <div className="px-4 py-2">
                   <SectionBlock title="必做资源 (A 层)" resources={aRes} />
                   <SectionBlock title="补充资源 (B 层)" resources={bRes} />
+                  <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
                 </div>
               </div>
             </section>

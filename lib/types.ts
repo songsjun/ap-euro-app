@@ -26,10 +26,10 @@ export interface Resource {
   id: string
   title: string
   url: string
-  type: string          // 'video_topic' | 'reading_textbook' | 'study_guide' | 'note_guide' | ...
+  type: string          // 'video_topic' | 'video_intro' | 'video_supplement' | 'reading_textbook' | ...
   source: string        // 'heimler' | 'amsco' | 'marco_learning' | 'tom_richey' | ...
   adapter_type: 'external_manual'
-  layer: 'A' | 'B'
+  layer: 'A' | 'B' | 'C'
   timing: 'topic' | 'unit_end' | 'cross_unit' | 'exam_prep' | 'writing_skill'
   unit: number          // 0 = global (cross-unit / exam-prep)
   topic_id: string      // "3.5" for topic resources; "" for unit_end/global
@@ -39,6 +39,8 @@ export interface Resource {
   note?: string
   unlock_after_unit?: number
   estimated_minutes?: number
+  pdf_page?: number     // for local PDF resources (AMSCO textbook)
+  textbook_page?: number
 }
 
 // ── TopicMeta ──

@@ -9,8 +9,8 @@ const SOURCE_RANK: Record<string, number> = {
 }
 
 function slotOrder(r: { layer: string; source: string; id: string }, index: number): number {
-  // A before B, within layer sort by SOURCE_RANK then original index
-  const layerBase = r.layer === 'A' ? 0 : 1000
+  // A=0, B=1000, C=2000; within layer sort by SOURCE_RANK then original index
+  const layerBase = r.layer === 'A' ? 0 : r.layer === 'B' ? 1000 : 2000
   const sourceRank = SOURCE_RANK[r.source] ?? 50
   return layerBase + sourceRank * 10 + index
 }
@@ -21,13 +21,15 @@ interface CurriculumResource {
   url: string
   type: string
   source: string
-  layer: 'A' | 'B'
+  layer: 'A' | 'B' | 'C'
   timing: string
   paid: boolean
   paid_product?: string
   note?: string
   unlock_after_unit?: number
   estimated_minutes?: number
+  pdf_page?: number
+  textbook_page?: number
 }
 
 interface CurriculumTopic {
@@ -76,7 +78,7 @@ export async function seedContentLibrary(): Promise<void> {
       topic.resources.forEach((r, i) => {
         resources.push({
           ...r,
-          layer: r.layer as 'A' | 'B',
+          layer: r.layer as 'A' | 'B' | 'C',
           timing: r.timing as Resource['timing'],
           adapter_type: 'external_manual',
           unit: unit.number,
@@ -90,7 +92,7 @@ export async function seedContentLibrary(): Promise<void> {
     unit.unit_resources.forEach((r, i) => {
       resources.push({
         ...r,
-        layer: r.layer as 'A' | 'B',
+        layer: r.layer as 'A' | 'B' | 'C',
         timing: 'unit_end',
         adapter_type: 'external_manual',
         unit: unit.number,
@@ -104,7 +106,7 @@ export async function seedContentLibrary(): Promise<void> {
   curriculum.frq_writing_skills.forEach((r, i) => {
     resources.push({
       ...r,
-      layer: r.layer as 'A' | 'B',
+      layer: r.layer as 'A' | 'B' | 'C',
       timing: 'writing_skill',
       adapter_type: 'external_manual',
       unit: 0,
@@ -117,7 +119,7 @@ export async function seedContentLibrary(): Promise<void> {
   curriculum.cross_unit_practice.forEach((r, i) => {
     resources.push({
       ...r,
-      layer: r.layer as 'A' | 'B',
+      layer: r.layer as 'A' | 'B' | 'C',
       timing: 'cross_unit',
       adapter_type: 'external_manual',
       unit: 0,
@@ -130,7 +132,7 @@ export async function seedContentLibrary(): Promise<void> {
   curriculum.exam_prep.forEach((r, i) => {
     resources.push({
       ...r,
-      layer: r.layer as 'A' | 'B',
+      layer: r.layer as 'A' | 'B' | 'C',
       timing: 'exam_prep',
       adapter_type: 'external_manual',
       unit: 0,

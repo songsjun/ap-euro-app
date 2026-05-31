@@ -22,6 +22,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
   const { flowState, dispatch, isLoading } = useTopicContext()
   const [aResources, setAResources] = useState<Resource[]>([])
   const [bResources, setBResources] = useState<Resource[]>([])
+  const [cResources, setCResources] = useState<Resource[]>([])
   const [completions, setCompletions] = useState<Map<string, Completion>>(new Map())
   const [topicMeta, setTopicMeta] = useState<TopicMeta | null>(null)
   const [resourcesLoading, setResourcesLoading] = useState(true)
@@ -36,24 +37,27 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
     const userId = StorageService.userId.get()
     if (!userId) return
 
-    let a: Resource[], b: Resource[]
+    let a: Resource[], b: Resource[], c: Resource[]
     if (isUnitReview) {
       const all = await repo.getUnitEndResources(unit)
       a = all.filter(r => r.layer === 'A')
       b = all.filter(r => r.layer === 'B')
+      c = all.filter(r => r.layer === 'C')
     } else {
-      ;[a, b] = await Promise.all([
+      ;[a, b, c] = await Promise.all([
         repo.getTopicResources(unit, topicId, 'A'),
         repo.getTopicResources(unit, topicId, 'B'),
+        repo.getTopicResources(unit, topicId, 'C'),
       ])
     }
 
-    const allIds = new Set([...a, ...b].map(r => r.id))
+    const allIds = new Set([...a, ...b, ...c].map(r => r.id))
     const completionList = await repo.getCompletions(userId, allIds)
     const completionMap = new Map(completionList.map(c => [c.resource_id, c]))
 
     setAResources(a)
     setBResources(b)
+    setCResources(c)
     setCompletions(completionMap)
     setResourcesLoading(false)
 
@@ -61,6 +65,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
       const meta = await repo.getTopicMeta(topicId)
       setTopicMeta(meta)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit, topicId, isUnitReview])
 
   useEffect(() => { loadResources() }, [loadResources])
@@ -69,7 +74,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
   const refreshCompletions = useCallback(async () => {
     const userId = StorageService.userId.get()
     if (!userId) return
-    const allIds = new Set([...aResources, ...bResources].map(r => r.id))
+    const allIds = new Set([...aResources, ...bResources, ...cResources].map(r => r.id))
     if (allIds.size === 0) return
     const list = await repo.getCompletions(userId, allIds)
     setCompletions(new Map(list.map(c => [c.resource_id, c])))
@@ -124,6 +129,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
 
   const bCandidates = bResources.filter(r => !completions.has(r.id))
   const showBSection = flowState.phase === 'REMEDIATION'
+  const showCSection = (flowState.phase === 'COMPLETE' || flowState.phase === 'REMEDIATION') && cResources.length > 0
 
   if (isLoading || resourcesLoading) return <TopicSkeleton />
 
@@ -200,6 +206,17 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
           description="深化理解"
           resources={bCandidates}
           defaultOpen={true}
+          {...rowProps}
+        />
+      )}
+
+      {showCSection && (
+        <TierSection
+          tier="C"
+          label="趣味记忆"
+          description="扩展与辅助记忆"
+          resources={cResources}
+          defaultOpen={false}
           {...rowProps}
         />
       )}

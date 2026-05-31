@@ -3,7 +3,7 @@ import type { Resource, TopicMeta, Completion, TopicUnlock } from '@/lib/types'
 import type { IRepository } from './interface'
 
 export class DexieRepository implements IRepository {
-  async getTopicResources(unit: number, topicId: string, layer: 'A' | 'B'): Promise<Resource[]> {
+  async getTopicResources(unit: number, topicId: string, layer: 'A' | 'B' | 'C'): Promise<Resource[]> {
     const db = getDb()
     return db.resources
       .where('[unit+topic_id+layer]')

@@ -18,13 +18,24 @@ function isGradedResource(r: Resource): boolean {
 
 function typeLabel(type: string): string {
   const labels: Record<string, string> = {
-    video_topic: '视频', video_unit_review: 'Unit复习', video_deep_dive: '深度讲解',
+    video_intro: '导读视频', video_topic: '主讲视频', video_unit_review: 'Unit复习',
+    video_supplement: '深度视频', video_memorization: '记忆视频',
     reading_textbook: '教材', study_guide: '学习指南', note_guide: '笔记模板',
     practice_mcq: 'MCQ练习', frq_practice: 'FRQ真题', primary_source: '一手史料',
     writing_skill: '写作技能', mcq_strategy: 'MCQ策略', exam_review: '考前复习',
     practice_exam: '模拟考试', review_flashcard: '闪卡', reference: '参考文档',
   }
   return labels[type] ?? type
+}
+
+function resolveUrl(r: Resource): string | null {
+  if (!r.url) return null
+  if (r.url.startsWith('local://')) {
+    // AMSCO PDF: open with page fragment
+    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    return null
+  }
+  return r.url
 }
 
 // ── ScorePanel ────────────────────────────────────────────────────────────────
@@ -93,6 +104,7 @@ export function ResourceRow({
   const isScoring = scoringId === resource.id
   const graded = isGradedResource(resource)
   const srcMeta = SOURCE_META[resource.source] ?? { label: resource.source, color: 'text-stone-500' }
+  const resolvedUrl = resolveUrl(resource)
 
   const scoreDisplay = (done || failed) && completion?.score !== undefined && completion.score_max
     ? `${completion.score}/${completion.score_max}`
@@ -121,8 +133,8 @@ export function ResourceRow({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            {resource.url && !resource.url.startsWith('local://') ? (
-              <a href={resource.url} target="_blank" rel="noopener noreferrer"
+            {resolvedUrl ? (
+              <a href={resolvedUrl} target="_blank" rel="noopener noreferrer"
                 className={`text-sm font-medium leading-snug transition-colors flex-1 ${done ? 'text-stone-400 line-through dark:text-stone-500' : 'text-stone-800 hover:text-blue-600 dark:text-stone-200 dark:hover:text-blue-400'}`}>
                 {resource.title}
               </a>
@@ -139,13 +151,16 @@ export function ResourceRow({
                 </span>
               )}
               <span className="text-[11px] text-stone-400 dark:text-stone-500">{typeLabel(resource.type)}</span>
+              {resource.textbook_page && (
+                <span className="text-[10px] text-blue-500 dark:text-blue-400">p.{resource.textbook_page}</span>
+              )}
               {scoreDisplay && (
                 <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded-md ${done ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}`}>
                   {scoreDisplay}
                 </span>
               )}
-              {resource.url && !resource.url.startsWith('local://') && (
-                <a href={resource.url} target="_blank" rel="noopener noreferrer"
+              {resolvedUrl && (
+                <a href={resolvedUrl} target="_blank" rel="noopener noreferrer"
                   className="text-stone-300 dark:text-stone-600 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                   aria-label="新标签页打开">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -190,7 +205,7 @@ export function ResourceRow({
 // ── TierSection ───────────────────────────────────────────────────────────────
 
 interface TierSectionProps {
-  tier: 'A' | 'B'
+  tier: 'A' | 'B' | 'C'
   label: string
   description?: string
   statusText?: string
@@ -204,19 +219,26 @@ interface TierSectionProps {
   onScoreCancel: () => void
 }
 
+const TIER_STYLE = {
+  A: { border: 'border-blue-100 dark:border-blue-900/30', bg: 'bg-blue-50/50 dark:bg-blue-900/10', badge: 'bg-blue-600 text-white', text: 'text-blue-700 dark:text-blue-300' },
+  B: { border: 'border-amber-100 dark:border-amber-900/30', bg: 'bg-amber-50/40 dark:bg-amber-900/10', badge: 'bg-amber-500 text-white', text: 'text-amber-700 dark:text-amber-300' },
+  C: { border: 'border-teal-100 dark:border-teal-900/30', bg: 'bg-teal-50/40 dark:bg-teal-900/10', badge: 'bg-teal-500 text-white', text: 'text-teal-700 dark:text-teal-300' },
+}
+
 export function TierSection({
   tier, label, description, statusText, resources, defaultOpen,
   completions, scoringId, onCheckDirect, onCheckGraded, onScoreSubmit, onScoreCancel,
 }: TierSectionProps) {
   const [open, setOpen] = useState(defaultOpen)
+  const s = TIER_STYLE[tier]
 
   return (
-    <div className={`bg-white dark:bg-stone-800 rounded-xl border ${tier === 'A' ? 'border-blue-100 dark:border-blue-900/30' : 'border-amber-100 dark:border-amber-900/30'} overflow-hidden`}>
+    <div className={`bg-white dark:bg-stone-800 rounded-xl border ${s.border} overflow-hidden`}>
       <button onClick={() => setOpen(o => !o)} aria-expanded={open}
-        className={`w-full px-4 py-2.5 flex items-center justify-between ${tier === 'A' ? 'bg-blue-50/50 dark:bg-blue-900/10' : 'bg-amber-50/40 dark:bg-amber-900/10'} hover:brightness-95 transition-all text-left`}>
+        className={`w-full px-4 py-2.5 flex items-center justify-between ${s.bg} hover:brightness-95 transition-all text-left`}>
         <div className="flex items-center gap-2.5">
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${tier === 'A' ? 'bg-blue-600 text-white' : 'bg-amber-500 text-white'}`}>{tier}</span>
-          <span className={`text-sm font-medium ${tier === 'A' ? 'text-blue-700 dark:text-blue-300' : 'text-amber-700 dark:text-amber-300'}`}>{label}</span>
+          <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${s.badge}`}>{tier}</span>
+          <span className={`text-sm font-medium ${s.text}`}>{label}</span>
           {description && <span className="text-xs text-stone-400 dark:text-stone-500">{description}</span>}
         </div>
         <div className="flex items-center gap-2">

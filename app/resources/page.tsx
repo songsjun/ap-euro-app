@@ -10,7 +10,7 @@ import type { Resource } from '@/lib/types'
 interface AmscoNode { name: string; children: AmscoNode[] }
 interface CurriculumTopic { id: string; title: string; resources: Resource[] }
 interface CurriculumUnit {
-  unit: number; title: string
+  id: string; number: number; title: string
   topics: CurriculumTopic[]
   unit_resources: Resource[]
 }
@@ -139,7 +139,7 @@ export default function ResourceGuidePage() {
   const unitResourceMap = new Map<number, Resource[]>()
 
   for (const cu of curriculum.units) {
-    unitResourceMap.set(cu.unit, cu.unit_resources ?? [])
+    unitResourceMap.set(cu.number, cu.unit_resources ?? [])
     for (const ct of cu.topics) {
       topicResourceMap.set(ct.id, ct.resources ?? [])
     }
@@ -166,7 +166,7 @@ export default function ResourceGuidePage() {
 
         {amscoUnits.map((amscoUnit, unitIdx) => {
           const unitNum = unitIdx + 1
-          const currUnit = curriculum.units.find(u => u.unit === unitNum)
+          const currUnit = curriculum.units.find(u => u.number === unitNum)
           if (!currUnit) return null
 
           const amscoTopics = amscoUnit.children

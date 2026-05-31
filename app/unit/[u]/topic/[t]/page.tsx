@@ -12,10 +12,10 @@ export function generateStaticParams() {
   return params
 }
 
-export default function TopicPage({ params }: { params: { u: string; t: string } }) {
-  const unit = parseInt(params.u)
-  const topicId = params.t
+export default async function TopicPage({ params }: { params: Promise<{ u: string; t: string }> }) {
+  const { u, t } = await params
+  const unit = parseInt(u)
   const unitTitle = UNIT_TITLES[unit] ?? `Unit ${unit}`
 
-  return <TopicPageClient unit={unit} topicId={topicId} unitTitle={unitTitle} />
+  return <TopicPageClient unit={unit} topicId={t} unitTitle={unitTitle} />
 }

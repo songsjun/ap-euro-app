@@ -5,7 +5,8 @@ export function generateStaticParams() {
   return Array.from({ length: 9 }, (_, i) => ({ u: String(i + 1) }))
 }
 
-export default function UnitReviewPage({ params }: { params: { u: string } }) {
-  const unit = parseInt(params.u)
+export default async function UnitReviewPage({ params }: { params: Promise<{ u: string }> }) {
+  const { u } = await params
+  const unit = parseInt(u)
   return <UnitReviewClient unit={unit} unitTitle={UNIT_TITLES[unit] ?? `Unit ${unit}`} />
 }

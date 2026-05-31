@@ -39,7 +39,7 @@ function isVideoResource(r: Resource): boolean {
 function resolveResourceUrl(r: Resource): string | null {
   if (!r.url) return null
   if (r.url.startsWith('local://')) {
-    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    if (r.url.includes('.pdf') && r.pdf_page) return `/pdf?page=${r.pdf_page}`
     return null
   }
   return r.url

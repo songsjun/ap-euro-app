@@ -31,8 +31,8 @@ function typeLabel(type: string): string {
 function resolveUrl(r: Resource): string | null {
   if (!r.url) return null
   if (r.url.startsWith('local://')) {
-    // AMSCO textbook PDF served from CF Pages as /amsco.pdf; #page=N handled by browser PDF viewer
-    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    // Route through in-app PDF viewer for reliable page navigation
+    if (r.url.includes('.pdf') && r.pdf_page) return `/pdf?page=${r.pdf_page}`
     return null
   }
   return r.url

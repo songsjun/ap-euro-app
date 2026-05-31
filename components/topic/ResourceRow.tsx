@@ -28,11 +28,12 @@ function typeLabel(type: string): string {
   return labels[type] ?? type
 }
 
+const AMSCO_PDF_URL = 'https://raw.githubusercontent.com/songsjun/ap-euro-app/main/reference/amsco.pdf'
+
 function resolveUrl(r: Resource): string | null {
   if (!r.url) return null
   if (r.url.startsWith('local://')) {
-    // AMSCO PDF: open with page fragment
-    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    if (r.url.includes('.pdf') && r.pdf_page) return `${AMSCO_PDF_URL}#page=${r.pdf_page}`
     return null
   }
   return r.url

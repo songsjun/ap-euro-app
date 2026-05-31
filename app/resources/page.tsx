@@ -36,10 +36,12 @@ function isVideoResource(r: Resource): boolean {
   return r.type.startsWith('video')
 }
 
+const AMSCO_PDF_URL = 'https://raw.githubusercontent.com/songsjun/ap-euro-app/main/reference/amsco.pdf'
+
 function resolveResourceUrl(r: Resource): string | null {
   if (!r.url) return null
   if (r.url.startsWith('local://')) {
-    if (r.url.includes('.pdf') && r.pdf_page) return `/amsco.pdf#page=${r.pdf_page}`
+    if (r.url.includes('.pdf') && r.pdf_page) return `${AMSCO_PDF_URL}#page=${r.pdf_page}`
     return null
   }
   return r.url

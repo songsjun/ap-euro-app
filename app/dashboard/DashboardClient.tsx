@@ -76,9 +76,14 @@ export function DashboardClient() {
               {ready ? `${totalCompleted} / ${totalTopics} topics` : '加载中…'}
             </p>
           </div>
-          <Link href="/settings" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
-            设置
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/resources" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
+              资源
+            </Link>
+            <Link href="/settings" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
+              设置
+            </Link>
+          </div>
         </div>
         {ready && (
           <div className="max-w-2xl mx-auto px-4 pb-2">

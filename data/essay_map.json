@@ -1,0 +1,100 @@
+{
+  "essays": [
+    {
+      "id": "2025-dbq",
+      "year": 2025,
+      "type": "dbq",
+      "score_max": 7,
+      "pdf": "local://past_exams/ap25-frq-set2.pdf",
+      "pdf_page": 1,
+      "units": [6, 7],
+      "topics": ["6.3", "6.4", "7.3"],
+      "preview": "2025 DBQ — Industrialization and Nationalism",
+      "theme": "ECO"
+    },
+    {
+      "id": "2025-leq-1",
+      "year": 2025,
+      "type": "leq",
+      "score_max": 6,
+      "pdf": "local://past_exams/ap25-frq-set2.pdf",
+      "pdf_page": 10,
+      "units": [1, 2],
+      "topics": ["1.2", "1.3", "2.2", "2.3"],
+      "preview": "2025 LEQ Option 1 — Renaissance and Reformation",
+      "theme": "CUL"
+    },
+    {
+      "id": "2025-leq-2",
+      "year": 2025,
+      "type": "leq",
+      "score_max": 6,
+      "pdf": "local://past_exams/ap25-frq-set2.pdf",
+      "pdf_page": 11,
+      "units": [4, 5],
+      "topics": ["4.3", "5.4", "5.6"],
+      "preview": "2025 LEQ Option 2 — Enlightenment and Revolution",
+      "theme": "INT"
+    },
+    {
+      "id": "2024-dbq",
+      "year": 2024,
+      "type": "dbq",
+      "score_max": 7,
+      "pdf": "local://past_exams/ap24-frq-set1.pdf",
+      "pdf_page": 1,
+      "units": [3, 4],
+      "topics": ["3.7", "4.3", "4.6"],
+      "preview": "2024 DBQ — Absolutism and the Enlightenment",
+      "theme": "GOV"
+    },
+    {
+      "id": "2024-saq-1",
+      "year": 2024,
+      "type": "saq",
+      "score_max": 3,
+      "pdf": "local://past_exams/ap24-frq-set1.pdf",
+      "pdf_page": 8,
+      "units": [8],
+      "topics": ["8.2", "8.3"],
+      "preview": "2024 SAQ 1 — World War I and Russian Revolution",
+      "theme": "INT"
+    },
+    {
+      "id": "2024-saq-2",
+      "year": 2024,
+      "type": "saq",
+      "score_max": 3,
+      "pdf": "local://past_exams/ap24-frq-set1.pdf",
+      "pdf_page": 9,
+      "units": [6],
+      "topics": ["6.2", "6.4"],
+      "preview": "2024 SAQ 2 — Industrial Revolution and Society",
+      "theme": "SOC"
+    },
+    {
+      "id": "2023-dbq-s1",
+      "year": 2023,
+      "type": "dbq",
+      "score_max": 7,
+      "pdf": "local://past_exams/ap23-frq-set1.pdf",
+      "pdf_page": 1,
+      "units": [5, 6],
+      "topics": ["5.4", "5.5", "6.5"],
+      "preview": "2023 Set 1 DBQ — French Revolution and Conservatism",
+      "theme": "GOV"
+    },
+    {
+      "id": "2023-dbq-s2",
+      "year": 2023,
+      "type": "dbq",
+      "score_max": 7,
+      "pdf": "local://past_exams/ap23-frq-set2.pdf",
+      "pdf_page": 1,
+      "units": [7, 8],
+      "topics": ["7.2", "7.6", "8.6"],
+      "preview": "2023 Set 2 DBQ — Nationalism and Imperialism",
+      "theme": "INT"
+    }
+  ]
+}

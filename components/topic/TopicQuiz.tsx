@@ -50,7 +50,7 @@ function MCQSection({
   return (
     <div>
       <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-        选择题 · {questions.length} 题
+        Multiple Choice · {questions.length} questions
       </p>
 
       {/* Stimulus */}
@@ -123,7 +123,7 @@ function MCQSection({
               </div>
               {submitted && (
                 <p className={`text-xs mt-2 font-medium ${isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                  {isCorrect ? '✓ 正确' : `✗ 正确答案是 ${correct}`}
+                  {isCorrect ? '✓ Correct' : `✗ Correct answer: ${correct}`}
                 </p>
               )}
             </div>
@@ -136,7 +136,7 @@ function MCQSection({
           onClick={handleSubmit}
           disabled={!allAnswered}
           className="mt-4 w-full py-2 rounded-lg text-sm font-medium bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 hover:bg-stone-700 dark:hover:bg-stone-300 disabled:opacity-40 transition-colors">
-          提交选择题
+          Submit Answers
         </button>
       )}
 
@@ -146,7 +146,7 @@ function MCQSection({
             (savedScore ?? 0) === questions.length ? 'text-emerald-600' :
             (savedScore ?? 0) >= questions.length * 0.67 ? 'text-amber-600' : 'text-red-600'
           }`}>
-            得分：{savedScore ?? questions.filter((q, i) => (savedAnswers?.[i] ?? selected[q.num]) === correctAnswers[i]).length} / {questions.length}
+            Score: {savedScore ?? questions.filter((q, i) => (savedAnswers?.[i] ?? selected[q.num]) === correctAnswers[i]).length} / {questions.length}
           </span>
         </div>
       )}
@@ -163,37 +163,37 @@ const ANSWER_HINTS: Record<'saq' | 'reflect' | 'skill', {
   items: string[]
 }> = {
   saq: {
-    title: 'SAQ 答题要点',
+    title: 'SAQ Tips',
     color: 'bg-teal-50/80 border-teal-200 dark:bg-teal-900/20 dark:border-teal-800',
     badge: 'text-teal-700 dark:text-teal-300',
     items: [
-      '直接作答，无需写导言或结论',
-      '结构：论点 → 具体史实（人名/时间/事件）→ 因果分析',
-      '每小问 2–4 句完整句子，约 50–100 字',
-      '史实必须具体：写"路易十四推行重商主义"而非"他推行政策"',
-      '1分关键：论点明确 + 史实点题 + 推理到位，三者缺一不可',
+      'Answer directly — no introduction or conclusion needed',
+      'Structure: claim → specific evidence (names/dates/events) → causal analysis',
+      '2–4 complete sentences per part, approximately 50–100 words',
+      'Be specific: write "Louis XIV promoted mercantilism" not "he implemented policies"',
+      'Key to 1 point: clear claim + on-topic evidence + sound reasoning — all three required',
     ],
   },
   reflect: {
-    title: '反思题答题提示',
+    title: 'Reflection Question Tips',
     color: 'bg-indigo-50/80 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800',
     badge: 'text-indigo-700 dark:text-indigo-300',
     items: [
-      '联系本 Topic 的核心概念和历史主题作答',
-      '提出你对历史影响或意义的明确判断',
-      '3–4 句即可，无需正式论文结构',
-      '高分做法：说明"为什么重要"，或与其他时期/地区类比',
+      'Connect your answer to the core concepts and historical themes of this Topic',
+      'State a clear judgment about the historical impact or significance',
+      '3–4 sentences are sufficient — no formal essay structure required',
+      'High-scoring approach: explain "why it matters" or compare to another period/region',
     ],
   },
   skill: {
-    title: '思维技能题答题提示',
+    title: 'Historical Thinking Skill Tips',
     color: 'bg-amber-50/80 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
     badge: 'text-amber-700 dark:text-amber-300',
     items: [
-      '情境化（Contextualization）：说明该事件在更广泛历史背景中的位置，需 3+ 句',
-      '指定具体时间段、地区或社会群体，避免泛泛而谈',
-      '历史推理三选一：比较（Comparison）/ 因果（Causation）/ 延续与变化（CCOT）',
-      '得分关键：背景描述必须先于或外延于题目所问的具体事件',
+      'Contextualization: explain the event\'s place within a broader historical context — 3+ sentences required',
+      'Specify a concrete time period, region, or social group; avoid vague generalizations',
+      'Choose one reasoning skill: Comparison / Causation / Continuity and Change Over Time (CCOT)',
+      'Key to scoring: your context must precede or extend beyond the specific event the question asks about',
     ],
   },
 }
@@ -261,7 +261,7 @@ function SubjectivePart({
     if (!answer.trim() || loading) return
     if (!hasApiKey) {
       setShowModel(true)
-      const grade: QuizPartGrade = { answer, score: 0, ai_feedback: '（无 API Key，请对照参考答案自行评估）' }
+      const grade: QuizPartGrade = { answer, score: 0, ai_feedback: '(No API Key — please self-assess against the model answer)' }
       setResult(grade)
       onGraded(grade)
       return
@@ -275,7 +275,7 @@ function SubjectivePart({
       setShowModel(true)
       onGraded(grade)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'AI 批改失败')
+      setError(e instanceof Error ? e.message : 'AI grading failed')
     }
     setLoading(false)
   }
@@ -286,7 +286,7 @@ function SubjectivePart({
         <span className="text-xs font-bold text-stone-500 dark:text-stone-400 uppercase mr-2">{label}</span>
         {result && (
           <span className={`text-xs font-semibold ${result.score === 1 ? 'text-emerald-600' : 'text-red-500'}`}>
-            {result.score === 1 ? '✓ 1/1 分' : '✗ 0/1 分'}
+            {result.score === 1 ? '✓ 1/1 pt' : '✗ 0/1 pt'}
           </span>
         )}
       </div>
@@ -312,7 +312,7 @@ function SubjectivePart({
           value={answer}
           onChange={e => setAnswer(e.target.value)}
           disabled={!!result}
-          placeholder="在此输入你的回答…"
+          placeholder="Enter your answer here…"
           rows={4}
           className="w-full text-sm text-stone-800 dark:text-stone-200 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-600 rounded-md px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-blue-400 disabled:opacity-60 disabled:bg-stone-50 dark:disabled:bg-stone-800 placeholder:text-stone-300 dark:placeholder:text-stone-600"
         />
@@ -322,7 +322,7 @@ function SubjectivePart({
             onClick={handleGrade}
             disabled={!answer.trim() || loading}
             className="w-full py-1.5 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-40 transition-colors">
-            {loading ? 'AI 批改中…' : 'AI 批改'}
+            {loading ? 'AI grading…' : 'Grade with AI'}
           </button>
         )}
         {error && <p className="text-xs text-red-500">{error}</p>}
@@ -337,7 +337,7 @@ function SubjectivePart({
 
         {showModel && modelAnswer && (
           <div className="border-t border-stone-100 dark:border-stone-700 pt-2">
-            <p className="text-[11px] font-semibold text-stone-400 dark:text-stone-500 uppercase mb-1.5">参考答案</p>
+            <p className="text-[11px] font-semibold text-stone-400 dark:text-stone-500 uppercase mb-1.5">Model Answer</p>
             <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed whitespace-pre-wrap">{modelAnswer}</p>
           </div>
         )}
@@ -421,14 +421,14 @@ export function TopicQuiz({ quizData, topicId }: Props) {
           onClick={() => setOpen(o => !o)}
           className="flex items-center gap-2.5 flex-1 text-left hover:opacity-80 transition-opacity">
           <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">
-            {isContent ? '📝 练习题' : '🔍 技能练习'}
+            {isContent ? '📝 Practice Questions' : '🔍 Skill Practice'}
           </span>
           {attemptSummary && (
             <span className="text-xs text-stone-400 dark:text-stone-500">{attemptSummary}</span>
           )}
           {!attemptSummary && (
             <span className="text-xs text-stone-400 dark:text-stone-500">
-              {isContent ? `选择题 · 简答题 · 反思` : `${quizData.skill_questions?.length ?? 0} 题`}
+              {isContent ? `MCQ · SAQ · Reflection` : `${quizData.skill_questions?.length ?? 0} questions`}
             </span>
           )}
           <svg className={`w-4 h-4 text-stone-400 transition-transform ml-auto ${open ? 'rotate-180' : ''}`}
@@ -440,7 +440,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
           <button
             onClick={handleRedo}
             className="ml-3 shrink-0 text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors">
-            重新练习
+            Redo
           </button>
         )}
       </div>
@@ -470,7 +470,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {(quizData.saq_parts?.length ?? 0) > 0 && (
                 <div>
                   <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-                    简答题
+                    Short Answer
                   </p>
                   <div className="space-y-3">
                     {quizData.saq_parts!.map((part, i) => (
@@ -499,7 +499,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {quizData.reflect_question && (
                 <div>
                   <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-                    反思
+                    Reflection
                   </p>
                   <SubjectivePart
                     key={`reflect-${redoKey}`}

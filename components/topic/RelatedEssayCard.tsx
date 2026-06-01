@@ -20,8 +20,8 @@ const TYPE_COLORS: Record<string, string> = {
 }
 
 const THEME_LABELS: Record<string, string> = {
-  ENV: '环境', CUL: '文化', GOV: '政治/制度',
-  ECO: '经济', SOC: '社会', INT: '国际', PP: '个人/政治权力',
+  ENV: 'Environment', CUL: 'Culture', GOV: 'Government/Institutions',
+  ECO: 'Economy', SOC: 'Society', INT: 'International', PP: 'Personal/Political Power',
 }
 
 function resolveEssayPdfUrl(essay: EssayEntry): string | null {
@@ -105,7 +105,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
     <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10 overflow-hidden">
       <div className="px-4 py-3 border-b border-indigo-100 dark:border-indigo-800/60">
         <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
-          相关历年题目
+          Related Past Exam Questions
         </p>
       </div>
 
@@ -161,7 +161,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                       </>
                     )}
                     <span className="text-stone-300 dark:text-stone-600">·</span>
-                    <span className="text-xs text-stone-400 dark:text-stone-500">满分 {maxScore} 分</span>
+                    <span className="text-xs text-stone-400 dark:text-stone-500">Max {maxScore} pts</span>
                   </div>
                 </div>
 
@@ -172,12 +172,12 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                       href={pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="查看题目"
+                      title="View prompt"
                       className="flex items-center gap-1 text-[11px] text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 border border-indigo-200 dark:border-indigo-700 rounded px-2 py-0.5 transition-colors">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                       </svg>
-                      题目
+                      Prompt
                     </a>
                   )}
                   {sgUrl && (
@@ -185,12 +185,12 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                       href={sgUrl}
                       target={isSgLocal ? '_blank' : '_blank'}
                       rel="noopener noreferrer"
-                      title="查看评分标准"
+                      title="View scoring guidelines"
                       className="flex items-center gap-1 text-[11px] text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                       </svg>
-                      评分
+                      Rubric
                     </a>
                   )}
                 </div>
@@ -212,7 +212,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                         if (entry) next.set(essay.id, { ...entry, score: e.target.value })
                         return next
                       })}
-                      placeholder="录入得分"
+                      placeholder="Enter score"
                       className="w-24 text-xs border border-stone-300 dark:border-stone-600 rounded-lg px-2 py-1 bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                     <span className="text-xs text-stone-400 dark:text-stone-500">/ {maxScore}</span>
@@ -220,7 +220,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                       onClick={() => saveScore(essay)}
                       disabled={saving === essay.id || !scoreEntry?.score}
                       className="text-xs bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg px-3 py-1 transition-colors">
-                      保存
+                      Save
                     </button>
                   </>
                 ) : (
@@ -229,7 +229,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                       {scoreEntry?.score} / {maxScore}
                     </span>
                     <span className="text-xs text-stone-400 dark:text-stone-500">
-                      {isDone ? '✓ 通过' : '✗ 未达标'}
+                      {isDone ? '✓ Pass' : '✗ Below threshold'}
                       {' '}({Math.round(parseFloat(scoreEntry?.score ?? '0') / maxScore * 100)}%)
                     </span>
                     <button
@@ -240,7 +240,7 @@ export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topic
                         return next
                       })}
                       className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 underline">
-                      修改
+                      Edit
                     </button>
                   </div>
                 )}

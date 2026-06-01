@@ -18,12 +18,12 @@ function isGradedResource(r: Resource): boolean {
 
 function typeLabel(type: string): string {
   const labels: Record<string, string> = {
-    video_intro: '导读视频', video_topic: '主讲视频', video_unit_review: 'Unit复习',
-    video_supplement: '深度视频', video_memorization: '记忆视频',
-    reading_textbook: '教材', study_guide: '学习指南', note_guide: '笔记模板',
-    practice_mcq: 'MCQ练习', frq_practice: 'FRQ真题', primary_source: '一手史料',
-    writing_skill: '写作技能', mcq_strategy: 'MCQ策略', exam_review: '考前复习',
-    practice_exam: '模拟考试', review_flashcard: '闪卡', reference: '参考文档',
+    video_intro: 'Intro Video', video_topic: 'Topic Video', video_unit_review: 'Unit Review',
+    video_supplement: 'Deep Dive', video_memorization: 'Memory Video',
+    reading_textbook: 'Textbook', study_guide: 'Study Guide', note_guide: 'Note Template',
+    practice_mcq: 'MCQ Practice', frq_practice: 'FRQ', primary_source: 'Primary Source',
+    writing_skill: 'Writing Skill', mcq_strategy: 'MCQ Strategy', exam_review: 'Exam Review',
+    practice_exam: 'Practice Exam', review_flashcard: 'Flashcard', reference: 'Reference',
   }
   return labels[type] ?? type
 }
@@ -53,7 +53,7 @@ function ScorePanel({ resource, onSubmit, onCancel }: {
   return (
     <div className="mx-4 mb-3 ml-10 mt-1">
       <div className="bg-stone-50 dark:bg-stone-800 rounded-lg border border-stone-200 dark:border-stone-600 p-3 space-y-3">
-        <p className="text-xs font-medium text-stone-600 dark:text-stone-400">录入得分</p>
+        <p className="text-xs font-medium text-stone-600 dark:text-stone-400">Enter Score</p>
         <div className="flex items-center gap-3">
           <button onClick={() => setScore(s => Math.max(0, s - 1))}
             className="w-8 h-8 rounded-lg bg-white border border-stone-200 text-stone-600 font-bold text-lg flex items-center justify-center hover:bg-stone-100 transition-colors dark:bg-stone-700 dark:border-stone-600 dark:text-stone-300">−</button>
@@ -70,11 +70,11 @@ function ScorePanel({ resource, onSubmit, onCancel }: {
         <div className="flex gap-2">
           <button onClick={() => onSubmit(score, max)}
             className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${willPass ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-red-100 hover:bg-red-200 text-red-700'}`}>
-            {willPass ? '通过' : '未达标'}
+            {willPass ? 'Pass' : 'Below Threshold'}
           </button>
           <button onClick={onCancel}
             className="px-3 py-1.5 rounded-lg text-sm text-stone-400 hover:text-stone-600 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors">
-            取消
+            Cancel
           </button>
         </div>
       </div>
@@ -118,7 +118,7 @@ export function ResourceRow({
         {/* Checkbox */}
         <button
           onClick={() => { if (done) return; if (graded) onCheckGraded(resource); else onCheckDirect(resource) }}
-          aria-label={done ? `${resource.title} 已完成` : `标记 ${resource.title} 完成`}
+          aria-label={done ? `${resource.title} completed` : `Mark ${resource.title} as complete`}
           aria-pressed={done}
           className={`mt-0.5 w-5 h-5 rounded-[5px] border-2 flex items-center justify-center shrink-0 transition-all ${
             done   ? 'bg-emerald-500 border-emerald-500 shadow-sm' :
@@ -147,7 +147,7 @@ export function ResourceRow({
             <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
               {resource.paid && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 font-medium">
-                  付费
+                  Paid
                 </span>
               )}
               <span className="text-[11px] text-stone-400 dark:text-stone-500">{typeLabel(resource.type)}</span>
@@ -162,7 +162,7 @@ export function ResourceRow({
               {resolvedUrl && (
                 <a href={resolvedUrl} target="_blank" rel="noopener noreferrer"
                   className="text-stone-300 dark:text-stone-600 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                  aria-label="新标签页打开">
+                  aria-label="Open in new tab">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                   </svg>
@@ -177,7 +177,7 @@ export function ResourceRow({
             {resource.note && (
               <button onClick={() => setExpanded(e => !e)}
                 className="text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
-                {expanded ? '收起' : '说明'}
+                {expanded ? 'Hide' : 'Note'}
               </button>
             )}
             {resource.paid && resource.paid_product && (
@@ -244,7 +244,7 @@ export function TierSection({
         <div className="flex items-center gap-2">
           {statusText && <span className="text-xs text-stone-500 dark:text-stone-400">{statusText}</span>}
           {!open && !statusText && resources.length > 0 && (
-            <span className="text-xs text-stone-400 dark:text-stone-500">{resources.length} 项</span>
+            <span className="text-xs text-stone-400 dark:text-stone-500">{resources.length} items</span>
           )}
           <svg className={`w-3.5 h-3.5 text-stone-300 dark:text-stone-600 transition-transform ${open ? 'rotate-180' : ''}`}
             fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

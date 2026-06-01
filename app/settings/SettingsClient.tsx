@@ -80,7 +80,7 @@ export function SettingsClient() {
       setTimeout(() => setImportStatus('idle'), 2000)
     } catch (err) {
       setImportStatus('error')
-      setImportError(err instanceof Error ? err.message : '导入失败，请检查文件格式')
+      setImportError(err instanceof Error ? err.message : 'Import failed — please check the file format')
     }
     e.target.value = ''
   }
@@ -98,14 +98,14 @@ export function SettingsClient() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
           </Link>
-          <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">设置</p>
+          <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Settings</p>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
 
         {/* Theme */}
-        <Section title="外观">
+        <Section title="Appearance">
           <div className="flex gap-2">
             {(['system', 'light', 'dark'] as ThemePreference[]).map(t => (
               <button key={t}
@@ -115,16 +115,16 @@ export function SettingsClient() {
                     ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 font-medium'
                     : 'border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:border-stone-300'
                 }`}>
-                {t === 'system' ? '跟随系统' : t === 'light' ? '浅色' : '深色'}
+                {t === 'system' ? 'System' : t === 'light' ? 'Light' : 'Dark'}
               </button>
             ))}
           </div>
         </Section>
 
         {/* API Key */}
-        <Section title="Claude API Key（可选）">
+        <Section title="Claude API Key (Optional)">
           <p className="text-xs text-stone-400 dark:text-stone-500 mb-3">
-            填写后可在 Topic 完成时获取 AI 学习反馈。Key 仅存储在本地浏览器。
+            Add your key to receive AI study feedback when completing a Topic. The key is stored locally in your browser only.
           </p>
           {savedKey ? (
             <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export function SettingsClient() {
               </code>
               <button onClick={handleClearKey}
                 className="text-xs text-red-500 hover:text-red-700 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2 transition-colors">
-                清除
+                Clear
               </button>
             </div>
           ) : (
@@ -149,28 +149,28 @@ export function SettingsClient() {
                 onClick={handleSaveKey}
                 disabled={!apiKey.trim()}
                 className="text-sm bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg px-4 py-2 transition-colors">
-                保存
+                Save
               </button>
             </div>
           )}
         </Section>
 
         {/* Data */}
-        <Section title="数据管理">
+        <Section title="Data Management">
           <div className="space-y-2">
             <button
               onClick={handleExport}
               disabled={exportStatus === 'loading'}
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-stone-300 dark:hover:border-stone-600 transition-all">
               <div className="text-left">
-                <p className="text-sm font-medium text-stone-800 dark:text-stone-200">导出进度数据</p>
-                <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">下载 JSON 备份文件</p>
+                <p className="text-sm font-medium text-stone-800 dark:text-stone-200">Export Progress Data</p>
+                <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Download a JSON backup file</p>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full ${
                 exportStatus === 'done' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' :
                 exportStatus === 'loading' ? 'text-stone-400' : 'text-blue-500'
               }`}>
-                {exportStatus === 'done' ? '已下载' : exportStatus === 'loading' ? '处理中…' : '导出'}
+                {exportStatus === 'done' ? 'Downloaded' : exportStatus === 'loading' ? 'Processing…' : 'Export'}
               </span>
             </button>
 
@@ -179,17 +179,17 @@ export function SettingsClient() {
               disabled={importStatus === 'loading'}
               className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-stone-300 dark:hover:border-stone-600 transition-all">
               <div className="text-left">
-                <p className="text-sm font-medium text-stone-800 dark:text-stone-200">导入进度数据</p>
-                <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">从备份文件恢复</p>
+                <p className="text-sm font-medium text-stone-800 dark:text-stone-200">Import Progress Data</p>
+                <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Restore from a backup file</p>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full ${
                 importStatus === 'done' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' :
                 importStatus === 'error' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
                 importStatus === 'loading' ? 'text-stone-400' : 'text-blue-500'
               }`}>
-                {importStatus === 'done' ? '已导入' :
-                 importStatus === 'error' ? '失败' :
-                 importStatus === 'loading' ? '处理中…' : '导入'}
+                {importStatus === 'done' ? 'Imported' :
+                 importStatus === 'error' ? 'Failed' :
+                 importStatus === 'loading' ? 'Processing…' : 'Import'}
               </span>
             </button>
             {importStatus === 'error' && importError && (
@@ -200,10 +200,10 @@ export function SettingsClient() {
         </Section>
 
         {/* About */}
-        <Section title="关于">
+        <Section title="About">
           <p className="text-xs text-stone-400 dark:text-stone-500">
-            AP European History 自适应学习平台<br />
-            数据存储于本地浏览器 IndexedDB，不上传任何个人信息。
+            AP European History Adaptive Learning Platform<br />
+            All data is stored locally in your browser&apos;s IndexedDB. No personal information is uploaded.
           </p>
         </Section>
 

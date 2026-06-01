@@ -50,23 +50,23 @@ function duration(resourceId: string): string | null {
 }
 
 const TYPE_LABEL: Record<string, string> = {
-  video_intro: '导读视频',
-  video_topic: '主讲视频',
-  video_supplement: '深度视频',
-  video_memorization: '记忆视频',
-  video_unit_review: 'Unit 复习',
-  reading_textbook: '教材',
-  study_guide: '学习指南',
-  note_guide: '笔记模板',
-  practice_mcq: 'MCQ 练习',
-  frq_practice: 'FRQ 练习',
-  primary_source: '一手史料',
-  writing_skill: '写作技能',
-  mcq_strategy: 'MCQ 策略',
-  exam_review: '考前复习',
-  practice_exam: '模拟考试',
-  review_flashcard: '闪卡',
-  reference: '参考文档',
+  video_intro: 'Intro Video',
+  video_topic: 'Topic Video',
+  video_supplement: 'Deep Dive',
+  video_memorization: 'Memory Video',
+  video_unit_review: 'Unit Review',
+  reading_textbook: 'Textbook',
+  study_guide: 'Study Guide',
+  note_guide: 'Note Template',
+  practice_mcq: 'MCQ Practice',
+  frq_practice: 'FRQ Practice',
+  primary_source: 'Primary Source',
+  writing_skill: 'Writing Skill',
+  mcq_strategy: 'MCQ Strategy',
+  exam_review: 'Exam Review',
+  practice_exam: 'Practice Exam',
+  review_flashcard: 'Flashcard',
+  reference: 'Reference',
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ function ResourceItem({ r }: { r: Resource }) {
       <div className="flex flex-col items-end gap-1 shrink-0">
         {r.paid && (
           <span className="text-[10px] text-amber-600 dark:text-amber-500 border border-amber-300 dark:border-amber-700 rounded px-1.5 py-0.5">
-            付费
+            Paid
           </span>
         )}
         <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
@@ -139,7 +139,7 @@ function ResourceItem({ r }: { r: Resource }) {
             ? 'border-teal-200 text-teal-600 dark:border-teal-800 dark:text-teal-400'
             : 'border-stone-200 text-stone-400 dark:border-stone-700'
         }`}>
-          {r.layer} 层
+          Tier {r.layer}
         </span>
       </div>
     </div>
@@ -181,8 +181,8 @@ export default function ResourceGuidePage() {
             </svg>
           </Link>
           <div>
-            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">资源指南</p>
-            <p className="text-xs text-stone-400 dark:text-stone-500">AP Euro · 按 AMSCO 教材结构排列</p>
+            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Resource Guide</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500">AP Euro · Organized by AMSCO textbook structure</p>
           </div>
         </div>
         {/* Unit quick-jump nav */}
@@ -255,7 +255,7 @@ export default function ResourceGuidePage() {
                           {topicId && (
                             <Link href={`/unit/${unitNum}/topic/${topicId}`}
                               className="shrink-0 text-xs text-blue-500 hover:text-blue-700 border border-blue-200 dark:border-blue-800 rounded px-2 py-0.5 transition-colors">
-                              学习 →
+                              Study →
                             </Link>
                           )}
                         </div>
@@ -264,12 +264,12 @@ export default function ResourceGuidePage() {
                       {/* Resources */}
                       <div className="px-4 py-2">
                         {resources.length === 0 ? (
-                          <p className="text-xs text-stone-400 dark:text-stone-500 py-2">暂无专项资源（参考单元综合资料）</p>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 py-2">No dedicated resources (refer to unit-level materials)</p>
                         ) : (
                           <>
-                            <SectionBlock title="必做资源 (A 层)" resources={aRes} />
-                            <SectionBlock title="补充资源 (B 层)" resources={bRes} />
-                            <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
+                            <SectionBlock title="Required Resources (Tier A)" resources={aRes} />
+                            <SectionBlock title="Supplemental Resources (Tier B)" resources={bRes} />
+                            <SectionBlock title="Memory Aids (Tier C)" resources={cRes} />
                           </>
                         )}
                       </div>
@@ -291,13 +291,13 @@ export default function ResourceGuidePage() {
                         <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{label}</p>
                         <Link href={`/unit/${unitNum}/review`}
                           className="text-xs text-indigo-500 hover:text-indigo-700 border border-indigo-200 dark:border-indigo-800 rounded px-2 py-0.5 transition-colors">
-                          复习 →
+                          Review →
                         </Link>
                       </div>
                       <div className="px-4 py-2">
-                        <SectionBlock title="必做资源 (A 层)" resources={aRes} />
-                        <SectionBlock title="补充资源 (B 层)" resources={bRes} />
-                        <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
+                        <SectionBlock title="Required Resources (Tier A)" resources={aRes} />
+                        <SectionBlock title="Supplemental Resources (Tier B)" resources={bRes} />
+                        <SectionBlock title="Memory Aids (Tier C)" resources={cRes} />
                       </div>
                     </div>
                   )
@@ -309,9 +309,9 @@ export default function ResourceGuidePage() {
 
         {/* Special phases */}
         {[
-          { key: 'frq_writing_skills', label: '写作技能 (DBQ · LEQ · SAQ)', href: '/writing-skills' },
-          { key: 'cross_unit_practice', label: '跨单元练习', href: '/cross-unit' },
-          { key: 'exam_prep', label: '考前冲刺', href: '/exam-prep' },
+          { key: 'frq_writing_skills', label: 'Writing Skills (DBQ · LEQ · SAQ)', href: '/writing-skills' },
+          { key: 'cross_unit_practice', label: 'Cross-Unit Practice', href: '/cross-unit' },
+          { key: 'exam_prep', label: 'Exam Prep', href: '/exam-prep' },
         ].map(({ key, label, href }) => {
           const resources = (curriculum as unknown as Record<string, Resource[]>)[key] ?? []
           if (resources.length === 0) return null
@@ -324,14 +324,14 @@ export default function ResourceGuidePage() {
                 <div className="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center text-sm shrink-0">✦</div>
                 <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">{label}</h2>
                 <Link href={href} className="ml-auto text-xs text-purple-500 hover:text-purple-700 border border-purple-200 dark:border-purple-800 rounded px-2 py-0.5">
-                  进入 →
+                  Go →
                 </Link>
               </div>
               <div className="border border-purple-200 dark:border-purple-800 rounded-xl overflow-hidden">
                 <div className="px-4 py-2">
-                  <SectionBlock title="必做资源 (A 层)" resources={aRes} />
-                  <SectionBlock title="补充资源 (B 层)" resources={bRes} />
-                  <SectionBlock title="趣味记忆 (C 层)" resources={cRes} />
+                  <SectionBlock title="Required Resources (Tier A)" resources={aRes} />
+                  <SectionBlock title="Supplemental Resources (Tier B)" resources={bRes} />
+                  <SectionBlock title="Memory Aids (Tier C)" resources={cRes} />
                 </div>
               </div>
             </section>

@@ -40,7 +40,7 @@ export function TopicPageClient({ unit, topicId, unitTitle, quizData }: Props) {
             <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Topic {topicId}</p>
           </div>
           <Link href="/dashboard" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300">
-            总览
+            Overview
           </Link>
         </div>
       </div>

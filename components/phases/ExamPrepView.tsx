@@ -109,8 +109,8 @@ export function ExamPrepView() {
             </svg>
           </Link>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-stone-400 dark:text-stone-500">考前冲刺</p>
-            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">真题练习 · 综合复习</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500">Exam Prep</p>
+            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Past Exams · Comprehensive Review</p>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function ExamPrepView() {
             {bResources.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide mb-2 px-1">
-                  补充资源
+                  Supplemental Resources
                 </p>
                 <ExamResourceList
                   resources={bResources}
@@ -237,7 +237,7 @@ function ExamResourceList({ resources, completions, scores, saving, onToggle, on
               </div>
               {r.paid && (
                 <span className="text-[10px] text-amber-600 dark:text-amber-500 border border-amber-300 dark:border-amber-700 rounded px-1.5 py-0.5 shrink-0">
-                  付费
+                  Paid
                 </span>
               )}
             </div>
@@ -253,7 +253,7 @@ function ExamResourceList({ resources, completions, scores, saving, onToggle, on
                       step={0.5}
                       value={scoreEntry.score}
                       onChange={e => onScoreChange(r.id, e.target.value)}
-                      placeholder="得分"
+                      placeholder="Score"
                       className="w-20 text-sm border border-stone-300 dark:border-stone-600 rounded-lg px-2 py-1 bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                     <span className="text-xs text-stone-400 dark:text-stone-500">/ {scoreEntry.scoreMax}</span>
@@ -261,7 +261,7 @@ function ExamResourceList({ resources, completions, scores, saving, onToggle, on
                       onClick={() => onScoreSave(r)}
                       disabled={saving === r.id || scoreEntry.score === ''}
                       className="text-xs bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg px-3 py-1 transition-colors">
-                      保存
+                      Save
                     </button>
                   </>
                 ) : (
@@ -275,7 +275,7 @@ function ExamResourceList({ resources, completions, scores, saving, onToggle, on
                     <button
                       onClick={() => onScoreEdit(r.id)}
                       className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 underline ml-1">
-                      修改
+                      Edit
                     </button>
                   </>
                 )}

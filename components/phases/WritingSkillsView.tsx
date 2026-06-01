@@ -83,7 +83,7 @@ export function WritingSkillsView() {
             </svg>
           </Link>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-stone-400 dark:text-stone-500">写作技能</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500">Writing Skills</p>
             <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">DBQ · LEQ · SAQ</p>
           </div>
           {ready && (
@@ -102,7 +102,7 @@ export function WritingSkillsView() {
         ) : groups.map(({ unlockAfterUnit, resources }) => (
           <div key={unlockAfterUnit}>
             <p className="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide mb-2 px-1">
-              Unit {unlockAfterUnit} 后解锁
+              Unlocks after Unit {unlockAfterUnit}
             </p>
             <div className="space-y-2">
               {resources.map(r => {
@@ -144,7 +144,7 @@ export function WritingSkillsView() {
                     </div>
                     {r.paid && (
                       <span className="text-[10px] text-amber-600 dark:text-amber-500 border border-amber-300 dark:border-amber-700 rounded px-1.5 py-0.5 shrink-0">
-                        付费
+                        Paid
                       </span>
                     )}
                   </div>

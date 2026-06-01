@@ -91,7 +91,7 @@ export function UnitOverviewClient({ unit, unitTitle, topicCount }: {
                     </p>
                     {(t.type === 'contextualizing' || t.type === 'skill_synthesis') && (
                       <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
-                        {t.type === 'contextualizing' ? '情境化' : '综合思维'}
+                        {t.type === 'contextualizing' ? 'Contextualization' : 'Synthesis'}
                       </p>
                     )}
                   </div>
@@ -122,7 +122,7 @@ export function UnitOverviewClient({ unit, unitTitle, topicCount }: {
                 <p className={`text-sm font-medium ${reviewUnlocked ? 'text-indigo-700 dark:text-indigo-300' : 'text-stone-400 dark:text-stone-500'}`}>
                   Unit {unit} Review
                 </p>
-                <p className="text-xs text-stone-400 dark:text-stone-500">复习视频 + 单元练习</p>
+                <p className="text-xs text-stone-400 dark:text-stone-500">Review videos + unit practice</p>
               </div>
               {reviewUnlocked && (
                 <svg className="w-4 h-4 text-stone-300 dark:text-stone-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

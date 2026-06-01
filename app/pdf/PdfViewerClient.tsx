@@ -9,7 +9,7 @@ function getFileMeta(file: string): { title: string; pageLabel: (page: number) =
       title: 'AMSCO AP European History',
       pageLabel: (page) => {
         const textbookPage = page - 46
-        return textbookPage > 0 ? `教材 p.${textbookPage}` : `PDF p.${page}`
+        return textbookPage > 0 ? `Textbook p.${textbookPage}` : `PDF p.${page}`
       },
       downloadName: 'AMSCO_AP_Euro.pdf',
     }
@@ -19,13 +19,13 @@ function getFileMeta(file: string): { title: string; pageLabel: (page: number) =
     const year = m ? `20${m[1]}` : ''
     return {
       title: `AP European History ${year} FRQ`,
-      pageLabel: (page) => `第 ${page} 页`,
+      pageLabel: (page) => `Page ${page}`,
       downloadName: file.split('/').pop() ?? 'frq.pdf',
     }
   }
   return {
     title: file.split('/').pop()?.replace('.pdf', '') ?? 'PDF',
-    pageLabel: (page) => `第 ${page} 页`,
+    pageLabel: (page) => `Page ${page}`,
     downloadName: file.split('/').pop() ?? 'document.pdf',
   }
 }
@@ -51,7 +51,7 @@ export function PdfViewerClient() {
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
-          关闭
+          Close
         </button>
         <span className="flex-1 text-center text-xs text-stone-400">
           {title}
@@ -61,7 +61,7 @@ export function PdfViewerClient() {
           href={safePath}
           download={downloadName}
           className="text-stone-500 hover:text-stone-300 transition-colors text-xs">
-          下载
+          Download
         </a>
       </div>
 

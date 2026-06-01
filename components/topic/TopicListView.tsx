@@ -112,7 +112,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
       const text = await requestTopicFeedback(unit, topicId, topicMeta.title)
       setAiFeedback(text)
     } catch (e) {
-      setAiError(e instanceof Error ? e.message : 'AI 请求失败')
+      setAiError(e instanceof Error ? e.message : 'AI request failed')
     }
     setAiLoading(false)
   }, [unit, topicId, topicMeta, aiLoading])
@@ -140,14 +140,14 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
           </svg>
         </div>
-        <p className="text-stone-500 dark:text-stone-400 text-sm">完成前一个 Topic 后解锁</p>
+        <p className="text-stone-500 dark:text-stone-400 text-sm">Complete the previous Topic to unlock</p>
       </div>
     )
   }
 
   const aStatus = (() => {
     const done = aResources.filter(r => completions.has(r.id)).length
-    return `${done}/${aResources.length} 完成`
+    return `${done}/${aResources.length} done`
   })()
   const isComplete = flowState.phase === 'COMPLETE'
   const bCandidates = bResources.filter(r => !completions.has(r.id))
@@ -165,8 +165,8 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
       {aResources.length > 0 && (
         <TierSection
           tier="A"
-          label="必做"
-          description="完成全部以解锁下一 Topic"
+          label="Required"
+          description="Complete all to unlock the next Topic"
           statusText={aStatus}
           resources={aResources}
           defaultOpen={true}
@@ -177,8 +177,8 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
       {bResources.length > 0 && (
         <TierSection
           tier="B"
-          label="补充资源"
-          description="深化理解"
+          label="Supplemental"
+          description="Deepen understanding"
           resources={bResources}
           defaultOpen={false}
           {...rowProps}
@@ -188,8 +188,8 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
       {cResources.length > 0 && (
         <TierSection
           tier="C"
-          label="趣味记忆"
-          description="扩展与辅助记忆"
+          label="Memory Aids"
+          description="Enrichment and memorization"
           resources={cResources}
           defaultOpen={false}
           {...rowProps}
@@ -207,7 +207,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
               onClick={handleAiFeedback}
               disabled={aiLoading}
               className="w-full py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors disabled:opacity-60">
-              {aiLoading ? 'AI 分析中…' : '✨ 获取 AI 学习反馈'}
+              {aiLoading ? 'AI analyzing…' : '✨ Get AI Study Feedback'}
             </button>
           )}
           {aiError && (
@@ -215,7 +215,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
           )}
           {aiFeedback && (
             <div className="px-4 py-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10">
-              <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-2">AI 学习反馈</p>
+              <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-2">AI Study Feedback</p>
               <p className="text-sm text-stone-700 dark:text-stone-300 whitespace-pre-wrap leading-relaxed">{aiFeedback}</p>
             </div>
           )}

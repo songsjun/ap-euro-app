@@ -25,7 +25,7 @@ export function UnitReviewClient({ unit, unitTitle }: { unit: number; unitTitle:
             <p className="text-xs text-stone-400 dark:text-stone-500">Unit {unit} · {unitTitle}</p>
             <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Unit Review</p>
           </div>
-          <Link href="/dashboard" className="text-xs text-stone-400 hover:text-stone-600">总览</Link>
+          <Link href="/dashboard" className="text-xs text-stone-400 hover:text-stone-600">Overview</Link>
         </div>
       </div>
       <div className="max-w-2xl mx-auto px-4 py-4">

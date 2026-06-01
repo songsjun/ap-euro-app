@@ -9,11 +9,11 @@ import { SOURCE_META } from '@/lib/constants'
 import type { Resource, Completion } from '@/lib/types'
 
 const TYPE_LABELS: Record<string, string> = {
-  practice_mcq: 'MCQ 练习',
-  study_guide: '学习指南',
-  practice_set: '综合练习',
-  note_guide: '笔记',
-  video_topic: '视频',
+  practice_mcq: 'MCQ Practice',
+  study_guide: 'Study Guide',
+  practice_set: 'Practice Set',
+  note_guide: 'Notes',
+  video_topic: 'Video',
 }
 
 export function CrossUnitView() {
@@ -76,8 +76,8 @@ export function CrossUnitView() {
             </svg>
           </Link>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-stone-400 dark:text-stone-500">跨单元练习</p>
-            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">综合主题 · 横向对比</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500">Cross-Unit Practice</p>
+            <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">Thematic Synthesis · Comparative Analysis</p>
           </div>
           {ready && (
             <span className="text-xs text-stone-400 dark:text-stone-500">{totalDone}/{totalCount}</span>
@@ -98,7 +98,7 @@ export function CrossUnitView() {
             {bResources.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide mb-2 px-1">
-                  补充资源
+                  Supplemental Resources
                 </p>
                 <ResourceList resources={bResources} completions={completions} saving={saving} onToggle={toggleDone} />
               </div>
@@ -162,7 +162,7 @@ function ResourceList({ resources, completions, saving, onToggle }: {
             </div>
             {r.paid && (
               <span className="text-[10px] text-amber-600 dark:text-amber-500 border border-amber-300 dark:border-amber-700 rounded px-1.5 py-0.5 shrink-0">
-                付费
+                Paid
               </span>
             )}
           </div>

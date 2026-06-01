@@ -73,15 +73,15 @@ export function DashboardClient() {
           <div>
             <h1 className="text-lg font-bold text-stone-900 dark:text-stone-100 tracking-tight">AP European History</h1>
             <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
-              {ready ? `${totalCompleted} / ${totalTopics} 个 Topic` : '加载中…'}
+              {ready ? `${totalCompleted} / ${totalTopics} Topics` : 'Loading…'}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/resources" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
-              资源
+              Resources
             </Link>
             <Link href="/settings" className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
-              设置
+              Settings
             </Link>
           </div>
         </div>
@@ -174,9 +174,9 @@ export function DashboardClient() {
         {/* Special phases */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { key: 'writing-skills', label: '写作技能', icon: '✍️', unlocked: writingUnlocked, desc: 'DBQ · LEQ · SAQ', href: '/writing-skills' },
-            { key: 'cross-unit', label: '跨单元练习', icon: '🔀', unlocked: crossUnitUnlocked, desc: 'Unit 4 后解锁', href: '/cross-unit' },
-            { key: 'exam-prep', label: '考前冲刺', icon: '🎯', unlocked: examPrepUnlocked, desc: 'Unit 9 后解锁', href: '/exam-prep' },
+            { key: 'writing-skills', label: 'Writing Skills', icon: '✍️', unlocked: writingUnlocked, desc: 'DBQ · LEQ · SAQ', href: '/writing-skills' },
+            { key: 'cross-unit', label: 'Cross-Unit Practice', icon: '🔀', unlocked: crossUnitUnlocked, desc: 'Unlocks after Unit 4', href: '/cross-unit' },
+            { key: 'exam-prep', label: 'Exam Prep', icon: '🎯', unlocked: examPrepUnlocked, desc: 'Unlocks after Unit 9', href: '/exam-prep' },
           ].map(({ key, label, icon, unlocked, desc, href }) => (
             <Link key={key} href={unlocked ? href : '#'}
               className={`relative flex flex-col items-center gap-1.5 px-3 py-4 rounded-xl border transition-all text-center ${

@@ -17,10 +17,10 @@ export function CompleteBanner({ topicTitle, onShowRemediation, hasBResources }:
         </div>
         <div>
           <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-            {topicTitle} 完成
+            {topicTitle} Complete
           </p>
           <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
-            所有必做内容已完成，下一个 Topic 已解锁
+            All required content finished — next Topic unlocked
           </p>
         </div>
       </div>
@@ -30,7 +30,7 @@ export function CompleteBanner({ topicTitle, onShowRemediation, hasBResources }:
           onClick={onShowRemediation}
           className="w-full py-2 rounded-lg border border-emerald-200 dark:border-emerald-700 text-sm text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-800/30 transition-colors"
         >
-          查看补充资源（B 层）
+          View Supplemental Resources (Tier B)
         </button>
       )}
     </div>

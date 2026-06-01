@@ -10,7 +10,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [7, 8],
       "topics": ["7.2", "8.2"],
-      "preview": "2025 DBQ — Was WWI primarily caused by popular nationalism or by the decisions of government leaders?",
+      "preview": "Evaluate whether the First World War was primarily caused by popular nationalism or by the decisions of government leaders.",
       "theme": "INT"
     },
     {
@@ -23,7 +23,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1],
       "topics": ["1.7", "1.8"],
-      "preview": "2025 LEQ Q2 — Iberian vs. Atlantic Empires: Which was more significant in the Age of Exploration (1450–1700)?",
+      "preview": "Evaluate the most significant difference between the colonization efforts of the Iberian powers (Spain and/or Portugal) and the colonization efforts of the Atlantic powers (Britain, France, and/or the Netherlands) in the period 1450 to 1700.",
       "theme": "INT"
     },
     {
@@ -36,7 +36,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [4],
       "topics": ["4.2", "4.3"],
-      "preview": "2025 LEQ Q3 — Did the Scientific Revolution or the Enlightenment have a greater impact on European thought?",
+      "preview": "Evaluate the most significant difference between the Scientific Revolution and the Enlightenment.",
       "theme": "CUL"
     },
     {
@@ -49,7 +49,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [6, 9],
       "topics": ["6.7", "9.8"],
-      "preview": "2025 LEQ Q4 — How did the status of women change from 1815–1914 compared to after 1914?",
+      "preview": "Evaluate the most significant difference between the status of women in the period 1815 to 1914 and the status of women in the period after 1914.",
       "theme": "SOC"
     },
     {
@@ -62,7 +62,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [6, 7],
       "topics": ["6.7", "6.8"],
-      "preview": "2024 DBQ — Was the feminist movement of the 1800s motivated primarily by economic equality or political equality?",
+      "preview": "Evaluate whether the feminist movement of the 1800s was motivated primarily by a desire to achieve economic equality or a desire to achieve political equality.",
       "theme": "SOC"
     },
     {
@@ -75,7 +75,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1, 2],
       "topics": ["1.2", "2.7"],
-      "preview": "2024 LEQ Q2 — How did European art develop and change from 1450 to 1700?",
+      "preview": "Evaluate the most significant change in European art during the period 1450 to 1700.",
       "theme": "CUL"
     },
     {
@@ -88,7 +88,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [5],
       "topics": ["5.6", "5.7"],
-      "preview": "2024 LEQ Q3 — How did international relations in Europe change from 1789 to 1815?",
+      "preview": "Evaluate the most significant change in international relations within Europe during the period 1789 to 1815.",
       "theme": "INT"
     },
     {
@@ -101,34 +101,47 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [9],
       "topics": ["9.2", "9.3"],
-      "preview": "2024 LEQ Q4 — How did European economies change from 1945 to 1989?",
+      "preview": "Evaluate the most significant economic change in Europe during the period 1945 to 1989.",
       "theme": "ECO"
     },
     {
-      "id": "2024-saq-1",
+      "id": "2024-saq-q2",
       "year": 2024,
       "type": "saq",
       "score_max": 3,
       "pdf": "local://past_exams/ap24-frq-set1.pdf",
       "pdf_page": 3,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
-      "units": [8],
-      "topics": ["8.2", "8.3"],
-      "preview": "2024 SAQ 1 — World War I and the Russian Revolution",
-      "theme": "INT"
+      "units": [7],
+      "topics": ["7.2", "7.3"],
+      "preview": "SAQ Q2 — Germania (1848 painting): Describe a goal the artist intended; explain one way political conditions 1800–1850 hindered it; explain one way developments after 1850 helped achieve it.",
+      "theme": "GOV"
     },
     {
-      "id": "2024-saq-2",
+      "id": "2024-saq-q3",
       "year": 2024,
       "type": "saq",
       "score_max": 3,
       "pdf": "local://past_exams/ap24-frq-set1.pdf",
-      "pdf_page": 5,
+      "pdf_page": 4,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
-      "units": [6],
-      "topics": ["6.3", "6.4"],
-      "preview": "2024 SAQ 2 — Second Wave Industrialization and Its Social Effects",
-      "theme": "ECO"
+      "units": [1],
+      "topics": ["1.7", "1.8"],
+      "preview": "SAQ Q3 — Describe one similarity and one difference between Portuguese and Spanish overseas expansion (1450–1650); explain one reason why new colonial powers (England, France, Dutch) caused conflicts in the 1600s–1700s.",
+      "theme": "INT"
+    },
+    {
+      "id": "2024-saq-q4",
+      "year": 2024,
+      "type": "saq",
+      "score_max": 3,
+      "pdf": "local://past_exams/ap24-frq-set1.pdf",
+      "pdf_page": 4,
+      "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
+      "units": [8, 9],
+      "topics": ["8.7", "9.6"],
+      "preview": "SAQ Q4 — Describe one difference and one similarity between challenges to democracies in the interwar period (1919–1939) and post-WWII period (1945–1989); explain one reason democracy spread in Europe 1975–2000.",
+      "theme": "GOV"
     },
     {
       "id": "2023-s1-dbq",
@@ -140,7 +153,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [4, 5],
       "topics": ["4.3", "5.8"],
-      "preview": "2023 Set 1 DBQ — Did Romanticism maintain a connection to the Enlightenment or challenge it?",
+      "preview": "Evaluate whether Romanticism maintained a connection to the Enlightenment or challenged the Enlightenment.",
       "theme": "CUL"
     },
     {
@@ -153,7 +166,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [2],
       "topics": ["2.2", "2.5"],
-      "preview": "2023 Set 1 LEQ Q2 — How did the Reformation transform European religious and political life (1517–1650)?",
+      "preview": "Evaluate the most significant political or social change during the Reformation period (1517–1650).",
       "theme": "CUL"
     },
     {
@@ -166,7 +179,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [6, 7],
       "topics": ["6.2", "6.3"],
-      "preview": "2023 Set 1 LEQ Q3 — How did Europe's economic relationships change and continue in the 19th century?",
+      "preview": "Evaluate the most significant change in Europe's economic relationship with the rest of the world during the 1800s.",
       "theme": "ECO"
     },
     {
@@ -179,7 +192,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [8, 9],
       "topics": ["8.5", "8.6"],
-      "preview": "2023 Set 1 LEQ Q4 — What caused political instability in Europe in the early 20th century?",
+      "preview": "Evaluate the most significant change in the sources of political instability in Europe during the 1900s.",
       "theme": "GOV"
     },
     {
@@ -192,7 +205,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1, 4, 5],
       "topics": ["1.9", "4.3"],
-      "preview": "2023 Set 2 DBQ — Was the Haitian Revolution caused primarily by Enlightenment ideas or by the conditions of enslavement?",
+      "preview": "Evaluate whether the Haitian Revolution was caused primarily by the spread of Enlightenment ideas or by the conditions of enslavement.",
       "theme": "SOC"
     },
     {
@@ -205,7 +218,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [2],
       "topics": ["2.2", "2.5"],
-      "preview": "2023 Set 2 LEQ Q2 — How did Protestant and Catholic Reformations differ in their approaches and impacts?",
+      "preview": "Evaluate the most significant difference between the Protestant Reformation and the subsequent Catholic Reformation.",
       "theme": "CUL"
     },
     {
@@ -218,7 +231,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [6],
       "topics": ["6.2", "6.3"],
-      "preview": "2023 Set 2 LEQ Q3 — Compare the First and Second Industrial Revolutions in Europe.",
+      "preview": "Evaluate the most significant difference between the first Industrial Revolution and the second Industrial Revolution.",
       "theme": "ECO"
     },
     {
@@ -231,7 +244,7 @@
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [8],
       "topics": ["8.2", "8.8"],
-      "preview": "2023 Set 2 LEQ Q4 — Compare the economic effects of WWI and WWII on European society.",
+      "preview": "Evaluate the most significant difference between the economic effects of the First World War and the economic effects of the Second World War.",
       "theme": "ECO"
     }
   ]

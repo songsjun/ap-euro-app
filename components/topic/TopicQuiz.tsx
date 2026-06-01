@@ -154,6 +154,80 @@ function MCQSection({
   )
 }
 
+// ── Answer Hint Panel ─────────────────────────────────────────────────────────
+
+const ANSWER_HINTS: Record<'saq' | 'reflect' | 'skill', {
+  title: string
+  color: string
+  badge: string
+  items: string[]
+}> = {
+  saq: {
+    title: 'SAQ 答题要点',
+    color: 'bg-teal-50/80 border-teal-200 dark:bg-teal-900/20 dark:border-teal-800',
+    badge: 'text-teal-700 dark:text-teal-300',
+    items: [
+      '直接作答，无需写导言或结论',
+      '结构：论点 → 具体史实（人名/时间/事件）→ 因果分析',
+      '每小问 2–4 句完整句子，约 50–100 字',
+      '史实必须具体：写"路易十四推行重商主义"而非"他推行政策"',
+      '1分关键：论点明确 + 史实点题 + 推理到位，三者缺一不可',
+    ],
+  },
+  reflect: {
+    title: '反思题答题提示',
+    color: 'bg-indigo-50/80 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800',
+    badge: 'text-indigo-700 dark:text-indigo-300',
+    items: [
+      '联系本 Topic 的核心概念和历史主题作答',
+      '提出你对历史影响或意义的明确判断',
+      '3–4 句即可，无需正式论文结构',
+      '高分做法：说明"为什么重要"，或与其他时期/地区类比',
+    ],
+  },
+  skill: {
+    title: '思维技能题答题提示',
+    color: 'bg-amber-50/80 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
+    badge: 'text-amber-700 dark:text-amber-300',
+    items: [
+      '情境化（Contextualization）：说明该事件在更广泛历史背景中的位置，需 3+ 句',
+      '指定具体时间段、地区或社会群体，避免泛泛而谈',
+      '历史推理三选一：比较（Comparison）/ 因果（Causation）/ 延续与变化（CCOT）',
+      '得分关键：背景描述必须先于或外延于题目所问的具体事件',
+    ],
+  },
+}
+
+function AnswerHint({ type }: { type: 'saq' | 'reflect' | 'skill' }) {
+  const [open, setOpen] = useState(false)
+  const hint = ANSWER_HINTS[type]
+
+  return (
+    <div className={`rounded-md border text-xs ${hint.color} overflow-hidden`}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-3 py-1.5 hover:brightness-95 transition-all text-left">
+        <span className={`font-semibold ${hint.badge}`}>{hint.title}</span>
+        <svg className={`w-3.5 h-3.5 ${hint.badge} transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m19 9-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <ul className={`px-3 pb-2.5 space-y-1 border-t ${hint.color.includes('teal') ? 'border-teal-200 dark:border-teal-800' : hint.color.includes('indigo') ? 'border-indigo-200 dark:border-indigo-800' : 'border-amber-200 dark:border-amber-800'}`}>
+          {hint.items.map((item, i) => (
+            <li key={i} className="flex items-start gap-1.5 pt-1 leading-relaxed text-stone-600 dark:text-stone-400">
+              <span className={`shrink-0 font-bold mt-px ${hint.badge}`}>{i + 1}.</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 // ── Subjective Part ───────────────────────────────────────────────────────────
 
 function SubjectivePart({
@@ -231,6 +305,8 @@ function SubjectivePart({
         )}
 
         <p className="text-sm text-stone-800 dark:text-stone-200 leading-snug">{question}</p>
+
+        {!result && <AnswerHint type={type} />}
 
         <textarea
           value={answer}

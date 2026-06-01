@@ -281,6 +281,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
   const [open, setOpen] = useState(false)
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null)
   const [loadingAttempt, setLoadingAttempt] = useState(true)
+  const [redoKey, setRedoKey] = useState(0)
   const hasApiKey = typeof window !== 'undefined' && !!StorageService.apiKey.get()
 
   // Load existing attempt
@@ -306,6 +307,15 @@ export function TopicQuiz({ quizData, topicId }: Props) {
     await repo.saveQuizAttempt(merged)
   }, [attempt, topicId])
 
+  const handleRedo = useCallback(async () => {
+    const userId = StorageService.userId.get()
+    if (!userId) return
+    const blank: QuizAttempt = { user_id: userId, topic_id: topicId, attempted_at: new Date().toISOString() }
+    setAttempt(blank)
+    await repo.saveQuizAttempt(blank)
+    setRedoKey(k => k + 1)
+  }, [topicId])
+
   if (loadingAttempt) return null
 
   const isContent = quizData.type === 'content'
@@ -330,10 +340,10 @@ export function TopicQuiz({ quizData, topicId }: Props) {
   return (
     <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
       {/* Header */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors text-left">
-        <div className="flex items-center gap-2.5">
+      <div className="px-4 py-3 flex items-center justify-between">
+        <button
+          onClick={() => setOpen(o => !o)}
+          className="flex items-center gap-2.5 flex-1 text-left hover:opacity-80 transition-opacity">
           <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">
             {isContent ? '📝 练习题' : '🔍 技能练习'}
           </span>
@@ -345,12 +355,19 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {isContent ? `MCQ + SAQ + Reflect` : `${quizData.skill_questions?.length ?? 0} 题`}
             </span>
           )}
-        </div>
-        <svg className={`w-4 h-4 text-stone-400 transition-transform ${open ? 'rotate-180' : ''}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="m19 9-7 7-7-7" />
-        </svg>
-      </button>
+          <svg className={`w-4 h-4 text-stone-400 transition-transform ml-auto ${open ? 'rotate-180' : ''}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m19 9-7 7-7-7" />
+          </svg>
+        </button>
+        {attemptSummary && (
+          <button
+            onClick={handleRedo}
+            className="ml-3 shrink-0 text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors">
+            重新练习
+          </button>
+        )}
+      </div>
 
       {open && (
         <div className="border-t border-stone-100 dark:border-stone-700 px-4 py-4 space-y-6">
@@ -361,6 +378,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {/* MCQ */}
               {(quizData.mcq_questions?.length ?? 0) > 0 && (
                 <MCQSection
+                  key={`mcq-${redoKey}`}
                   quizData={quizData}
                   savedAnswers={attempt?.mcq_answers}
                   savedScore={attempt?.mcq_score}
@@ -381,7 +399,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                   <div className="space-y-3">
                     {quizData.saq_parts!.map((part, i) => (
                       <SubjectivePart
-                        key={part.part}
+                        key={`${redoKey}-${part.part}`}
                         label={`(${part.part})`}
                         stimulusSource={part.stimulus_source}
                         stimulusText={part.stimulus_text}
@@ -408,6 +426,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                     Reflect · 思考与反思
                   </p>
                   <SubjectivePart
+                    key={`reflect-${redoKey}`}
                     label="Reflect"
                     question={quizData.reflect_question}
                     modelAnswer={quizData.reflect_model_answer ?? ''}
@@ -435,7 +454,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               <div className="space-y-3">
                 {quizData.skill_questions!.map((q, i) => (
                   <SubjectivePart
-                    key={i}
+                    key={`${redoKey}-skill-${i}`}
                     label={`Q${i + 1}`}
                     question={q}
                     modelAnswer={quizData.skill_model_answers?.[i] ?? ''}

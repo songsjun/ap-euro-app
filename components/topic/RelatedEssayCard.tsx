@@ -42,13 +42,13 @@ function resolveSgUrl(essay: EssayEntry): string | null {
   return essay.sg_url ?? null
 }
 
-export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: string }) {
+export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topicId: string }) {
   const [completions, setCompletions] = useState<Map<string, Completion>>(new Map())
   const [scores, setScores] = useState<Map<string, { score: string; editing: boolean }>>(new Map())
   const [saving, setSaving] = useState<string | null>(null)
 
   const essays = (essayMap.essays as EssayEntry[]).filter(e =>
-    e.units.includes(unit) || e.topics.includes(topicId)
+    e.topics.includes(topicId)
   )
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: str
       setScores(scoreMap)
     }).catch(console.error)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unit, topicId])
+  }, [topicId])
 
   async function saveScore(essay: EssayEntry) {
     const userId = StorageService.userId.get()!

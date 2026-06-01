@@ -130,10 +130,6 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
     ? `Unit ${unit} Review`
     : topicMeta ? `${topicId} ${topicMeta.title}` : topicId
 
-  const bCandidates = bResources.filter(r => !completions.has(r.id))
-  const showBSection = flowState.phase === 'REMEDIATION'
-  const showCSection = (flowState.phase === 'COMPLETE' || flowState.phase === 'REMEDIATION') && cResources.length > 0
-
   if (isLoading || resourcesLoading) return <TopicSkeleton />
 
   if (flowState.phase === 'LOCKED') {
@@ -153,44 +149,17 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
     const done = aResources.filter(r => completions.has(r.id)).length
     return `${done}/${aResources.length} 完成`
   })()
+  const isComplete = flowState.phase === 'COMPLETE'
+  const bCandidates = bResources.filter(r => !completions.has(r.id))
 
   return (
     <div className="space-y-3">
-      {flowState.phase === 'COMPLETE' && (
-        <>
-          <CompleteBanner
-            topicTitle={title}
-            hasBResources={bCandidates.length > 0}
-            onShowRemediation={bCandidates.length > 0
-              ? () => dispatch({ type: 'SHOW_REMEDIATION' })
-              : undefined}
-          />
-          {!isUnitReview && topicId && quizData && (
-            <TopicQuiz quizData={quizData} topicId={topicId} />
-          )}
-          {!isUnitReview && topicId && (
-            <>
-              {hasApiKey && !aiFeedback && (
-                <button
-                  onClick={handleAiFeedback}
-                  disabled={aiLoading}
-                  className="w-full py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors disabled:opacity-60">
-                  {aiLoading ? 'AI 分析中…' : '✨ 获取 AI 学习反馈'}
-                </button>
-              )}
-              {aiError && (
-                <p className="text-xs text-red-500 dark:text-red-400 px-1">{aiError}</p>
-              )}
-              {aiFeedback && (
-                <div className="px-4 py-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10">
-                  <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-2">AI 学习反馈</p>
-                  <p className="text-sm text-stone-700 dark:text-stone-300 whitespace-pre-wrap leading-relaxed">{aiFeedback}</p>
-                </div>
-              )}
-              <RelatedEssayCard unit={unit} topicId={topicId} />
-            </>
-          )}
-        </>
+      {isComplete && (
+        <CompleteBanner
+          topicTitle={title}
+          hasBResources={bCandidates.length > 0}
+          onShowRemediation={undefined}
+        />
       )}
 
       {aResources.length > 0 && (
@@ -205,18 +174,18 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
         />
       )}
 
-      {showBSection && bCandidates.length > 0 && (
+      {bResources.length > 0 && (
         <TierSection
           tier="B"
           label="补充资源"
           description="深化理解"
-          resources={bCandidates}
-          defaultOpen={true}
+          resources={bResources}
+          defaultOpen={false}
           {...rowProps}
         />
       )}
 
-      {showCSection && (
+      {cResources.length > 0 && (
         <TierSection
           tier="C"
           label="趣味记忆"
@@ -225,6 +194,33 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
           defaultOpen={false}
           {...rowProps}
         />
+      )}
+
+      {!isUnitReview && topicId && quizData && (
+        <TopicQuiz quizData={quizData} topicId={topicId} />
+      )}
+
+      {!isUnitReview && topicId && (
+        <>
+          {hasApiKey && !aiFeedback && isComplete && (
+            <button
+              onClick={handleAiFeedback}
+              disabled={aiLoading}
+              className="w-full py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors disabled:opacity-60">
+              {aiLoading ? 'AI 分析中…' : '✨ 获取 AI 学习反馈'}
+            </button>
+          )}
+          {aiError && (
+            <p className="text-xs text-red-500 dark:text-red-400 px-1">{aiError}</p>
+          )}
+          {aiFeedback && (
+            <div className="px-4 py-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10">
+              <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-2">AI 学习反馈</p>
+              <p className="text-sm text-stone-700 dark:text-stone-300 whitespace-pre-wrap leading-relaxed">{aiFeedback}</p>
+            </div>
+          )}
+          <RelatedEssayCard unit={unit} topicId={topicId} />
+        </>
       )}
     </div>
   )

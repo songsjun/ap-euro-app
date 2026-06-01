@@ -1,4 +1,4 @@
-import type { Resource, TopicMeta, Completion, TopicUnlock } from '@/lib/types'
+import type { Resource, TopicMeta, Completion, TopicUnlock, QuizAttempt } from '@/lib/types'
 
 export interface IRepository {
   // Resources
@@ -21,6 +21,10 @@ export interface IRepository {
   isSectionUnlocked(userId: string, sectionId: string): Promise<boolean>
   unlockSection(userId: string, sectionId: string): Promise<void>
   getUnlockedSections(userId: string): Promise<string[]>
+
+  // Quiz attempts
+  getQuizAttempt(userId: string, topicId: string): Promise<QuizAttempt | null>
+  saveQuizAttempt(attempt: QuizAttempt): Promise<void>
 
   // Transactions
   transact(fn: () => Promise<void>): Promise<void>

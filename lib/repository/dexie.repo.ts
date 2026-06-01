@@ -1,5 +1,5 @@
 import { getDb } from '@/lib/infra/db'
-import type { Resource, TopicMeta, Completion, TopicUnlock } from '@/lib/types'
+import type { Resource, TopicMeta, Completion, TopicUnlock, QuizAttempt } from '@/lib/types'
 import type { IRepository } from './interface'
 
 export class DexieRepository implements IRepository {
@@ -71,6 +71,14 @@ export class DexieRepository implements IRepository {
   async getUnlockedSections(userId: string): Promise<string[]> {
     const records = await getDb().topic_unlocks.where('user_id').equals(userId).toArray()
     return records.map(r => r.section_id)
+  }
+
+  async getQuizAttempt(userId: string, topicId: string): Promise<QuizAttempt | null> {
+    return (await getDb().quiz_attempts.get([userId, topicId])) ?? null
+  }
+
+  async saveQuizAttempt(attempt: QuizAttempt): Promise<void> {
+    await getDb().quiz_attempts.put(attempt)
   }
 
   async transact(fn: () => Promise<void>): Promise<void> {

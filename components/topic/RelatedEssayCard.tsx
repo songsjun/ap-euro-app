@@ -13,14 +13,33 @@ const TYPE_LABELS: Record<string, string> = {
   saq: 'SAQ',
 }
 
+const TYPE_COLORS: Record<string, string> = {
+  dbq: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+  leq: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  saq: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+}
+
 const THEME_LABELS: Record<string, string> = {
-  ENV: '环境',
-  CUL: '文化',
-  GOV: '政治/制度',
-  ECO: '经济',
-  SOC: '社会',
-  INT: '国际',
-  PP: '个人/政治权力',
+  ENV: '环境', CUL: '文化', GOV: '政治/制度',
+  ECO: '经济', SOC: '社会', INT: '国际', PP: '个人/政治权力',
+}
+
+function resolveEssayPdfUrl(essay: EssayEntry): string | null {
+  if (!essay.pdf) return null
+  if (essay.pdf.startsWith('local://')) {
+    const path = essay.pdf.replace('local://', '/')
+    return `/pdf?file=${encodeURIComponent(path)}&page=${essay.pdf_page}`
+  }
+  return essay.pdf
+}
+
+function resolveSgUrl(essay: EssayEntry): string | null {
+  if (essay.sg_pdf?.startsWith('local://')) {
+    const path = essay.sg_pdf.replace('local://', '/')
+    const page = essay.sg_page ?? 1
+    return `/pdf?file=${encodeURIComponent(path)}&page=${page}`
+  }
+  return essay.sg_url ?? null
 }
 
 export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: string }) {
@@ -49,6 +68,7 @@ export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: str
       }
       setScores(scoreMap)
     }).catch(console.error)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit, topicId])
 
   async function saveScore(essay: EssayEntry) {
@@ -82,37 +102,57 @@ export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: str
   if (essays.length === 0) return null
 
   return (
-    <div className="mt-4 px-4 py-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10">
-      <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-3">
-        相关历年题目
-      </p>
-      <div className="space-y-3">
+    <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/40 dark:bg-indigo-900/10 overflow-hidden">
+      <div className="px-4 py-3 border-b border-indigo-100 dark:border-indigo-800/60">
+        <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+          相关历年题目
+        </p>
+      </div>
+
+      <div className="divide-y divide-indigo-100 dark:divide-indigo-800/40">
         {essays.map(essay => {
           const comp = completions.get(essay.id)
           const isDone = comp?.status === 'passed'
           const isFailed = comp?.status === 'failed'
           const scoreEntry = scores.get(essay.id)
           const maxScore = essay.score_max ?? ESSAY_SCORE_MAX[essay.type] ?? 5
+          const pdfUrl = resolveEssayPdfUrl(essay)
+          const sgUrl = resolveSgUrl(essay)
+          const isSgLocal = !!essay.sg_pdf
 
           return (
-            <div key={essay.id} className={`rounded-lg border px-3 py-2.5 transition-all ${
-              isDone ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-900/10' :
-              isFailed ? 'border-amber-200 dark:border-amber-800 bg-amber-50/20 dark:bg-amber-900/10' :
-              'border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800'
+            <div key={essay.id} className={`px-4 py-3 ${
+              isDone ? 'bg-emerald-50/30 dark:bg-emerald-900/10' :
+              isFailed ? 'bg-amber-50/20 dark:bg-amber-900/5' : ''
             }`}>
-              <div className="flex items-start gap-2">
-                <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                  essay.type === 'dbq' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
-                  essay.type === 'leq' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                  'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
-                }`}>
+              {/* Top row: type badge + title + action buttons */}
+              <div className="flex items-start gap-2.5">
+                <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 mt-0.5 ${TYPE_COLORS[essay.type]}`}>
                   {TYPE_LABELS[essay.type]}
                 </span>
+
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${isDone ? 'text-emerald-700 dark:text-emerald-300' : 'text-stone-800 dark:text-stone-200'}`}>
-                    {essay.preview}
-                  </p>
-                  <div className="flex items-center gap-2 mt-0.5">
+                  {/* Essay title — clickable if PDF available */}
+                  {pdfUrl ? (
+                    <a
+                      href={pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-sm font-medium leading-snug hover:underline ${
+                        isDone ? 'text-emerald-700 dark:text-emerald-300' : 'text-stone-800 dark:text-stone-200 hover:text-indigo-600 dark:hover:text-indigo-400'
+                      }`}>
+                      {essay.preview}
+                    </a>
+                  ) : (
+                    <p className={`text-sm font-medium leading-snug ${
+                      isDone ? 'text-emerald-700 dark:text-emerald-300' : 'text-stone-800 dark:text-stone-200'
+                    }`}>
+                      {essay.preview}
+                    </p>
+                  )}
+
+                  {/* Metadata row */}
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     <span className="text-xs text-stone-400 dark:text-stone-500">{essay.year}</span>
                     {essay.theme && (
                       <>
@@ -121,12 +161,42 @@ export function RelatedEssayCard({ unit, topicId }: { unit: number; topicId: str
                       </>
                     )}
                     <span className="text-stone-300 dark:text-stone-600">·</span>
-                    <span className="text-xs text-stone-400 dark:text-stone-500">满分 {maxScore}</span>
+                    <span className="text-xs text-stone-400 dark:text-stone-500">满分 {maxScore} 分</span>
                   </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {pdfUrl && (
+                    <a
+                      href={pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="查看题目"
+                      className="flex items-center gap-1 text-[11px] text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 border border-indigo-200 dark:border-indigo-700 rounded px-2 py-0.5 transition-colors">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                      </svg>
+                      题目
+                    </a>
+                  )}
+                  {sgUrl && (
+                    <a
+                      href={sgUrl}
+                      target={isSgLocal ? '_blank' : '_blank'}
+                      rel="noopener noreferrer"
+                      title="查看评分标准"
+                      className="flex items-center gap-1 text-[11px] text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                      评分
+                    </a>
+                  )}
                 </div>
               </div>
 
-              {/* Score input */}
+              {/* Score input row */}
               <div className="mt-2.5 flex items-center gap-2">
                 {scoreEntry?.editing || scoreEntry?.score === '' ? (
                   <>

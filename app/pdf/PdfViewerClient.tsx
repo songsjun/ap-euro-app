@@ -2,12 +2,44 @@
 
 import { useSearchParams } from 'next/navigation'
 
+// File display metadata
+function getFileMeta(file: string): { title: string; pageLabel: (page: number) => string; downloadName: string } {
+  if (file === '/amsco.pdf' || !file) {
+    return {
+      title: 'AMSCO AP European History',
+      pageLabel: (page) => {
+        const textbookPage = page - 46
+        return textbookPage > 0 ? `教材 p.${textbookPage}` : `PDF p.${page}`
+      },
+      downloadName: 'AMSCO_AP_Euro.pdf',
+    }
+  }
+  if (file.includes('frq')) {
+    const m = file.match(/ap(\d+)-frq/)
+    const year = m ? `20${m[1]}` : ''
+    return {
+      title: `AP European History ${year} FRQ`,
+      pageLabel: (page) => `第 ${page} 页`,
+      downloadName: file.split('/').pop() ?? 'frq.pdf',
+    }
+  }
+  return {
+    title: file.split('/').pop()?.replace('.pdf', '') ?? 'PDF',
+    pageLabel: (page) => `第 ${page} 页`,
+    downloadName: file.split('/').pop() ?? 'document.pdf',
+  }
+}
+
 export function PdfViewerClient() {
   const params = useSearchParams()
   const page = Math.max(1, parseInt(params.get('page') ?? '1') || 1)
-  // AMSCO textbook page offset: pdf_page 47 = textbook p.1
-  const textbookPage = page - 46
-  const pageLabel = textbookPage > 0 ? `教材 p.${textbookPage}` : `PDF p.${page}`
+  const file = params.get('file') ?? '/amsco.pdf'
+
+  // Only allow same-origin paths for security
+  const safePath = file.startsWith('/') ? file : '/amsco.pdf'
+
+  const { title, pageLabel, downloadName } = getFileMeta(safePath)
+  const label = pageLabel(page)
 
   return (
     <div className="fixed inset-0 flex flex-col bg-stone-900">
@@ -22,12 +54,12 @@ export function PdfViewerClient() {
           关闭
         </button>
         <span className="flex-1 text-center text-xs text-stone-400">
-          AMSCO AP European History
-          <span className="text-stone-500 ml-2">{pageLabel}</span>
+          {title}
+          <span className="text-stone-500 ml-2">{label}</span>
         </span>
         <a
-          href="/amsco.pdf"
-          download="AMSCO_AP_Euro.pdf"
+          href={safePath}
+          download={downloadName}
           className="text-stone-500 hover:text-stone-300 transition-colors text-xs">
           下载
         </a>
@@ -35,9 +67,9 @@ export function PdfViewerClient() {
 
       {/* PDF iframe — same-origin ensures #page=N is honored by browser PDF viewer */}
       <iframe
-        src={`/amsco.pdf#page=${page}`}
+        src={`${safePath}#page=${page}`}
         className="flex-1 w-full border-0"
-        title={`AMSCO AP European History — ${pageLabel}`}
+        title={`${title} — ${label}`}
       />
     </div>
   )

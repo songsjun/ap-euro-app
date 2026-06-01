@@ -8,17 +8,20 @@ import { StorageService } from '@/lib/infra/storage'
 import { TierSection } from './ResourceRow'
 import { CompleteBanner } from './CompleteBanner'
 import { RelatedEssayCard } from './RelatedEssayCard'
+import { TopicQuiz } from './TopicQuiz'
 import { TopicSkeleton } from '@/components/TopicSkeleton'
 import { StorageService as _StorageService } from '@/lib/infra/storage'
 import { requestTopicFeedback } from '@/lib/infra/ai'
+import type { QuizTopicData } from '@/lib/types'
 
 interface TopicListViewProps {
   unit: number
   topicId: string       // "" for unit review
   isUnitReview?: boolean
+  quizData?: QuizTopicData | null
 }
 
-export function TopicListView({ unit, topicId, isUnitReview = false }: TopicListViewProps) {
+export function TopicListView({ unit, topicId, isUnitReview = false, quizData }: TopicListViewProps) {
   const { flowState, dispatch, isLoading } = useTopicContext()
   const [aResources, setAResources] = useState<Resource[]>([])
   const [bResources, setBResources] = useState<Resource[]>([])
@@ -162,6 +165,9 @@ export function TopicListView({ unit, topicId, isUnitReview = false }: TopicList
               ? () => dispatch({ type: 'SHOW_REMEDIATION' })
               : undefined}
           />
+          {!isUnitReview && topicId && quizData && (
+            <TopicQuiz quizData={quizData} topicId={topicId} />
+          )}
           {!isUnitReview && topicId && (
             <>
               {hasApiKey && !aiFeedback && (

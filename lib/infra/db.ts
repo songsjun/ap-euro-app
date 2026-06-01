@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable, type Table } from 'dexie'
-import type { Resource, TopicMeta, Completion, TopicUnlock, MetaRecord } from '@/lib/types'
+import type { Resource, TopicMeta, Completion, TopicUnlock, MetaRecord, QuizAttempt } from '@/lib/types'
 
 export interface AppDB extends Dexie {
   resources:     EntityTable<Resource, 'id'>
@@ -7,6 +7,7 @@ export interface AppDB extends Dexie {
   completions:   Table<Completion>
   topic_unlocks: Table<TopicUnlock>
   meta:          EntityTable<MetaRecord, 'key'>
+  quiz_attempts: Table<QuizAttempt>
 }
 
 let _db: AppDB | null = null
@@ -23,6 +24,9 @@ export function getDb(): AppDB {
       completions:   '[user_id+resource_id], user_id',
       topic_unlocks: '[user_id+section_id], user_id',
       meta:          'key',
+    })
+    _db.version(2).stores({
+      quiz_attempts: '[user_id+topic_id], user_id',
     })
   }
   return _db

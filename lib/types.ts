@@ -105,12 +105,67 @@ export interface EssayEntry {
   score_max: number     // dbq=7, leq=6, saq=3
   pdf: string           // "local://past_exams/ap24-frq-set1.pdf" or URL
   pdf_page: number
-  sg_pdf?: string
+  sg_pdf?: string       // local scoring guide PDF path ("local://...")
   sg_page?: number
+  sg_url?: string       // external scoring guide URL (College Board)
   units: number[]
   topics: string[]
   preview: string
   theme?: string        // AP Euro theme: ENV/CUL/GOV/ECO/SOC/INT/PP
+}
+
+// ── Quiz system ──
+
+export interface MCQQuestion {
+  num: number
+  question: string
+  options: { A: string; B: string; C: string; D: string }
+}
+
+export interface SAQPart {
+  part: string
+  stimulus_source: string | null
+  stimulus_text: string | null
+  question: string
+}
+
+// Serializable quiz data passed from server page → client components
+export interface QuizTopicData {
+  topicId: string
+  title: string
+  type: 'contextualizing' | 'content' | 'skill_synthesis'
+  // content type
+  mcq_stimulus_source?: string
+  mcq_stimulus_text?: string
+  mcq_questions?: MCQQuestion[]
+  mcq_answers?: string[]        // correct answers e.g. ["C", "A", "D"]
+  saq_parts?: SAQPart[]
+  saq_model_answers?: Record<string, string>   // {"part_a": "...", "part_b": "..."}
+  reflect_question?: string
+  reflect_model_answer?: string
+  // contextualizing / skill_synthesis type
+  skill_section?: string
+  skill_questions?: string[]
+  skill_model_answers?: string[]
+  note?: string
+}
+
+export interface QuizPartGrade {
+  answer: string
+  score: number     // 0 or 1
+  ai_feedback: string
+}
+
+export interface QuizAttempt {
+  user_id: string
+  topic_id: string
+  attempted_at: string
+  mcq_score?: number
+  mcq_total?: number
+  mcq_answers?: string[]       // student's submitted answers
+  saq_parts?: QuizPartGrade[]
+  reflect?: QuizPartGrade
+  skill_parts?: QuizPartGrade[]
 }
 
 // ── Export/Import ──

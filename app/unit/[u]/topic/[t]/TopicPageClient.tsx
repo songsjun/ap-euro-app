@@ -6,14 +6,16 @@ import { ensureAppReady } from '@/lib/app/ready'
 import { TopicProvider } from '@/lib/app/session-context'
 import { TopicListView } from '@/components/topic/TopicListView'
 import { TopicSkeleton } from '@/components/TopicSkeleton'
+import type { QuizTopicData } from '@/lib/types'
 
 interface Props {
   unit: number
   topicId: string
   unitTitle: string
+  quizData: QuizTopicData | null
 }
 
-export function TopicPageClient({ unit, topicId, unitTitle }: Props) {
+export function TopicPageClient({ unit, topicId, unitTitle, quizData }: Props) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export function TopicPageClient({ unit, topicId, unitTitle }: Props) {
       {/* Content */}
       <div className="max-w-2xl mx-auto px-4 py-4">
         <TopicProvider unit={unit} topicId={topicId}>
-          <TopicListView unit={unit} topicId={topicId} />
+          <TopicListView unit={unit} topicId={topicId} quizData={quizData} />
         </TopicProvider>
       </div>
     </div>

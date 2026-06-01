@@ -243,6 +243,9 @@ export function TierSection({
         </div>
         <div className="flex items-center gap-2">
           {statusText && <span className="text-xs text-stone-500 dark:text-stone-400">{statusText}</span>}
+          {!open && !statusText && resources.length > 0 && (
+            <span className="text-xs text-stone-400 dark:text-stone-500">{resources.length} 项</span>
+          )}
           <svg className={`w-3.5 h-3.5 text-stone-300 dark:text-stone-600 transition-transform ${open ? 'rotate-180' : ''}`}
             fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="m19 9-7 7-7-7" />

@@ -89,9 +89,11 @@ export function UnitOverviewClient({ unit, unitTitle, topicCount }: {
                     <p className={`text-sm font-medium truncate ${isDone ? 'text-emerald-700 dark:text-emerald-300' : isUnlocked ? 'text-stone-800 dark:text-stone-200' : 'text-stone-400 dark:text-stone-500'}`}>
                       {t.title}
                     </p>
-                    <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
-                      {t.type === 'contextualizing' ? '情境化' : t.type === 'skill_synthesis' ? '综合思维' : '内容'}
-                    </p>
+                    {(t.type === 'contextualizing' || t.type === 'skill_synthesis') && (
+                      <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
+                        {t.type === 'contextualizing' ? '情境化' : '综合思维'}
+                      </p>
+                    )}
                   </div>
                   {isUnlocked && !isDone && (
                     <svg className="w-4 h-4 text-stone-300 dark:text-stone-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

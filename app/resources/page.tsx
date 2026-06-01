@@ -173,7 +173,7 @@ export default function ResourceGuidePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 dark:bg-stone-900/90 backdrop-blur border-b border-stone-100 dark:border-stone-800">
+      <div className="sticky top-0 z-10 bg-white/95 dark:bg-stone-900/95 backdrop-blur border-b border-stone-100 dark:border-stone-800">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -184,6 +184,15 @@ export default function ResourceGuidePage() {
             <p className="text-sm font-semibold text-stone-800 dark:text-stone-200">资源指南</p>
             <p className="text-xs text-stone-400 dark:text-stone-500">AP Euro · 按 AMSCO 教材结构排列</p>
           </div>
+        </div>
+        {/* Unit quick-jump nav */}
+        <div className="max-w-3xl mx-auto px-4 pb-2.5 flex items-center gap-1 overflow-x-auto scrollbar-none">
+          {Array.from({ length: 9 }, (_, i) => i + 1).map(n => (
+            <a key={n} href={`#unit-${n}`}
+              className="shrink-0 text-xs font-medium px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 hover:text-stone-800 dark:hover:text-stone-200 transition-colors">
+              Unit {n}
+            </a>
+          ))}
         </div>
       </div>
 
@@ -199,7 +208,7 @@ export default function ResourceGuidePage() {
           const topicNodes = amscoTopics.filter(ch => !(/review/i.test(ch.name)))
 
           return (
-            <section key={unitNum}>
+            <section key={unitNum} id={`unit-${unitNum}`} className="scroll-mt-28">
               {/* Unit header */}
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-lg bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 flex items-center justify-center text-sm font-bold shrink-0">

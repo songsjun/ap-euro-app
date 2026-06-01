@@ -352,7 +352,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
           )}
           {!attemptSummary && (
             <span className="text-xs text-stone-400 dark:text-stone-500">
-              {isContent ? `MCQ + SAQ + Reflect` : `${quizData.skill_questions?.length ?? 0} 题`}
+              {isContent ? `选择题 · 简答题 · 反思` : `${quizData.skill_questions?.length ?? 0} 题`}
             </span>
           )}
           <svg className={`w-4 h-4 text-stone-400 transition-transform ml-auto ${open ? 'rotate-180' : ''}`}
@@ -394,7 +394,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {(quizData.saq_parts?.length ?? 0) > 0 && (
                 <div>
                   <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-                    简答题 (SAQ)
+                    简答题
                   </p>
                   <div className="space-y-3">
                     {quizData.saq_parts!.map((part, i) => (
@@ -423,7 +423,7 @@ export function TopicQuiz({ quizData, topicId }: Props) {
               {quizData.reflect_question && (
                 <div>
                   <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
-                    Reflect · 思考与反思
+                    反思
                   </p>
                   <SubjectivePart
                     key={`reflect-${redoKey}`}

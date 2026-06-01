@@ -22,7 +22,7 @@
       "pdf_page": 11,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1],
-      "topics": ["1.7", "1.8"],
+      "topics": ["1.6", "1.7", "1.8"],
       "preview": "Evaluate the most significant difference between the colonization efforts of the Iberian powers (Spain and/or Portugal) and the colonization efforts of the Atlantic powers (Britain, France, and/or the Netherlands) in the period 1450 to 1700.",
       "theme": "INT"
     },
@@ -87,7 +87,7 @@
       "pdf_page": 12,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [5],
-      "topics": ["5.6", "5.7"],
+      "topics": ["5.4", "5.5", "5.6", "5.7"],
       "preview": "Evaluate the most significant change in international relations within Europe during the period 1789 to 1815.",
       "theme": "INT"
     },
@@ -126,7 +126,7 @@
       "pdf_page": 4,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1],
-      "topics": ["1.7", "1.8"],
+      "topics": ["1.6", "1.7", "1.8"],
       "preview": "SAQ Q3 — Describe one similarity and one difference between Portuguese and Spanish overseas expansion (1450–1650); explain one reason why new colonial powers (England, France, Dutch) caused conflicts in the 1600s–1700s.",
       "theme": "INT"
     },
@@ -178,7 +178,7 @@
       "pdf_page": 12,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [6, 7],
-      "topics": ["6.2", "6.3"],
+      "topics": ["6.2", "6.3", "7.6"],
       "preview": "Evaluate the most significant change in Europe's economic relationship with the rest of the world during the 1800s.",
       "theme": "ECO"
     },
@@ -191,7 +191,7 @@
       "pdf_page": 12,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [8, 9],
-      "topics": ["8.5", "8.6"],
+      "topics": ["8.4", "8.5", "8.6"],
       "preview": "Evaluate the most significant change in the sources of political instability in Europe during the 1900s.",
       "theme": "GOV"
     },
@@ -204,7 +204,7 @@
       "pdf_page": 7,
       "sg_url": "https://apcentral.collegeboard.org/courses/ap-european-history/exam/past-exam-questions",
       "units": [1, 4, 5],
-      "topics": ["1.9", "4.3"],
+      "topics": ["1.9", "4.3", "5.4"],
       "preview": "Evaluate whether the Haitian Revolution was caused primarily by the spread of Enlightenment ideas or by the conditions of enslavement.",
       "theme": "SOC"
     },

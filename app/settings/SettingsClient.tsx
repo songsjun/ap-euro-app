@@ -159,7 +159,7 @@ export function SettingsClient() {
         <Section title="About">
           <p className="text-xs text-stone-400 dark:text-stone-500">
             AP European History Adaptive Learning Platform<br />
-            All data is stored locally in your browser&apos;s IndexedDB. No personal information is uploaded.
+            Your signed-in progress is stored in the local PostgreSQL database. Curriculum content is cached in browser storage for fast access.
           </p>
         </Section>
 

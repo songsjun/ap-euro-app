@@ -16,7 +16,6 @@ const answersMap = new Map<string, any>(
   (answersRaw as any).topics.map((t: any) => [t.topic, t])
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildQuizData(topicId: string): QuizTopicData | null {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const q: any = questionsMap.get(topicId)

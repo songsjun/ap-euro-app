@@ -66,7 +66,6 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
       const meta = await repo.getTopicMeta(topicId)
       setTopicMeta(meta)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit, topicId, isUnitReview])
 
   useEffect(() => { loadResources() }, [loadResources])
@@ -79,7 +78,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
     if (allIds.size === 0) return
     const list = await repo.getCompletions(userId, allIds)
     setCompletions(new Map(list.map(c => [c.resource_id, c])))
-  }, [aResources, bResources])
+  }, [aResources, bResources, cResources])
 
   // Refresh after flow state changes (completions updated)
   useEffect(() => { refreshCompletions() }, [flowState, refreshCompletions])

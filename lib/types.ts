@@ -163,9 +163,22 @@ export interface QuizAttempt {
   mcq_score?: number
   mcq_total?: number
   mcq_answers?: string[]       // student's submitted answers
-  saq_parts?: QuizPartGrade[]
+  saq_parts?: Array<QuizPartGrade | null>
   reflect?: QuizPartGrade
-  skill_parts?: QuizPartGrade[]
+  skill_parts?: Array<QuizPartGrade | null>
+}
+
+export interface QuizAttemptMutation {
+  user_id: string
+  topic_id: string
+  attempted_at: string
+  reset?: boolean
+  mcq_score?: number
+  mcq_total?: number
+  mcq_answers?: string[]
+  saq_parts?: Array<QuizPartGrade | null>
+  reflect?: QuizPartGrade
+  skill_parts?: Array<QuizPartGrade | null>
 }
 
 // ── Export/Import ──

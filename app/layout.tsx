@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AppInitializer } from '@/components/AppInitializer'
+import { AuthGate } from '@/components/AuthGate'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100">
         <AppInitializer />
-        {children}
+        <AuthGate>{children}</AuthGate>
       </body>
     </html>
   )

@@ -1,10 +1,24 @@
-import { StorageService } from './storage'
 import type { ChatMessage } from '@/lib/types'
 
-const API_URL = 'https://api.anthropic.com/v1/messages'
-const MODEL = 'claude-haiku-4-5-20251001'
-const MAX_TOKENS = 400
-const GRADE_MAX_TOKENS = 250
+type AiProvider = 'codex' | 'gemini'
+type ReasoningEffort = 'low' | 'medium' | 'high' | 'xhigh'
+type QuestionType = 'saq' | 'reflect' | 'skill'
+
+interface AiGatewayResponse {
+  ok: boolean
+  text: string
+  parsed_json: unknown | null
+  error_type: string | null
+}
+
+const AI_API_URL = '/api/ai'
+const AI_PROVIDER: AiProvider = 'codex'
+const AI_MODEL = 'gpt-5.4-mini'
+
+const AI_PARAMS = {
+  topicFeedback: { reasoning_effort: 'low' as ReasoningEffort, json_mode: false },
+  subjectiveGrading: { reasoning_effort: 'medium' as ReasoningEffort, json_mode: true },
+}
 
 function buildSystemPrompt(unit: number, topicId: string, topicTitle: string): string {
   return `You are a knowledgeable AP European History tutor helping a student who just finished studying Topic ${topicId}: "${topicTitle}" (Unit ${unit}).
@@ -16,8 +30,6 @@ Your role: provide a concise study feedback in 2-3 short paragraphs (Chinese pre
 
 Be specific, concrete, and AP-exam focused. No generic advice. No bullet points.`
 }
-
-type QuestionType = 'saq' | 'reflect' | 'skill'
 
 const GRADE_SYSTEM: Record<QuestionType, string> = {
   saq: `You are an AP European History teacher grading a Short Answer Question (SAQ) part.
@@ -33,45 +45,84 @@ Award 1 if the response correctly explains or describes the historical context/a
 Respond ONLY in this exact JSON format: {"score": 0 or 1, "feedback": "1-2 sentence explanation in Chinese"}`,
 }
 
+async function callAiGateway(
+  prompt: string,
+  params: { reasoning_effort: ReasoningEffort; json_mode: boolean },
+): Promise<AiGatewayResponse> {
+  const response = await fetch(AI_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      provider: AI_PROVIDER,
+      model: AI_MODEL,
+      reasoning_effort: params.reasoning_effort,
+      json_mode: params.json_mode,
+      web_search: false,
+      prompt,
+    }),
+  })
+
+  if (!response.ok) throw new Error(`AI gateway unavailable: ${response.status}`)
+
+  const data = (await response.json()) as AiGatewayResponse
+  if (!data.ok) throw new Error(`AI gateway unavailable: ${data.error_type ?? 'unknown'}`)
+  return data
+}
+
+function jsonObjectFromResponse(response: AiGatewayResponse): Record<string, unknown> {
+  const parsed = isRecord(response.parsed_json) ? response.parsed_json : parseJsonObject(response.text)
+  if (!parsed) throw new Error('AI gateway returned invalid JSON')
+  return parsed
+}
+
+function parseJsonObject(text: string): Record<string, unknown> | null {
+  try {
+    const parsed: unknown = JSON.parse(text)
+    return isRecord(parsed) ? parsed : null
+  } catch {
+    const first = text.indexOf('{')
+    const last = text.lastIndexOf('}')
+    if (first === -1 || last <= first) return null
+    try {
+      const parsed: unknown = JSON.parse(text.slice(first, last + 1))
+      return isRecord(parsed) ? parsed : null
+    } catch {
+      return null
+    }
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function scoreValue(value: unknown): number {
+  return value === 1 ? 1 : 0
+}
+
+function stringValue(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback
+}
+
 export async function gradeSubjectiveAnswer(
   question: string,
   modelAnswer: string,
   studentAnswer: string,
   type: QuestionType
 ): Promise<{ score: number; feedback: string }> {
-  const apiKey = StorageService.apiKey.get()
-  if (!apiKey) throw new Error('No API key configured')
+  const prompt = `${GRADE_SYSTEM[type]}
 
-  const userContent = `Model answer (reference): ${modelAnswer}\n\nQuestion: ${question}\n\nStudent's answer: ${studentAnswer}`
+Model answer (reference): ${modelAnswer}
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: GRADE_MAX_TOKENS,
-      system: GRADE_SYSTEM[type],
-      messages: [{ role: 'user', content: userContent }],
-    }),
-  })
+Question: ${question}
 
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`AI grading failed: ${response.status} ${err}`)
-  }
+Student's answer: ${studentAnswer.slice(0, 3000)}`
 
-  const data = await response.json()
-  const text: string = data.content?.[0]?.text ?? '{}'
-  try {
-    const parsed = JSON.parse(text)
-    return { score: parsed.score ?? 0, feedback: parsed.feedback ?? '' }
-  } catch {
-    return { score: 0, feedback: text.slice(0, 200) }
+  const response = await callAiGateway(prompt, AI_PARAMS.subjectiveGrading)
+  const parsed = jsonObjectFromResponse(response)
+  return {
+    score: scoreValue(parsed.score),
+    feedback: stringValue(parsed.feedback),
   }
 }
 
@@ -80,37 +131,20 @@ export async function requestTopicFeedback(
   topicId: string,
   topicTitle: string
 ): Promise<string> {
-  const apiKey = StorageService.apiKey.get()
-  if (!apiKey) throw new Error('No API key configured')
-
   const messages: ChatMessage[] = [
     {
       role: 'user',
       content: `我刚刚完成了 Topic ${topicId} "${topicTitle}" 的学习。请给我一个学习总结和备考提示。`,
     },
   ]
+  const transcript = messages.map(message => `${message.role}: ${message.content}`).join('\n')
+  const prompt = `${buildSystemPrompt(unit, topicId, topicTitle)}
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system: buildSystemPrompt(unit, topicId, topicTitle),
-      messages,
-    }),
-  })
+Conversation:
+${transcript}
 
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`AI request failed: ${response.status} ${err}`)
-  }
+Respond as the tutor.`
 
-  const data = await response.json()
-  return data.content?.[0]?.text ?? ''
+  const response = await callAiGateway(prompt, AI_PARAMS.topicFeedback)
+  return response.text
 }

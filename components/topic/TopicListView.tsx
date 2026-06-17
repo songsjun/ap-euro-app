@@ -10,7 +10,6 @@ import { CompleteBanner } from './CompleteBanner'
 import { RelatedEssayCard } from './RelatedEssayCard'
 import { TopicQuiz } from './TopicQuiz'
 import { TopicSkeleton } from '@/components/TopicSkeleton'
-import { StorageService as _StorageService } from '@/lib/infra/storage'
 import { requestTopicFeedback } from '@/lib/infra/ai'
 import type { QuizTopicData } from '@/lib/types'
 
@@ -33,7 +32,6 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
   const [aiFeedback, setAiFeedback] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
-  const hasApiKey = typeof window !== 'undefined' && !!_StorageService.apiKey.get()
 
   // Load resources
   const loadResources = useCallback(async () => {
@@ -202,7 +200,7 @@ export function TopicListView({ unit, topicId, isUnitReview = false, quizData }:
 
       {!isUnitReview && topicId && (
         <>
-          {hasApiKey && !aiFeedback && isComplete && (
+          {!aiFeedback && isComplete && (
             <button
               onClick={handleAiFeedback}
               disabled={aiLoading}

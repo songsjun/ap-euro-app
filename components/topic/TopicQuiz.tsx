@@ -238,7 +238,6 @@ function SubjectivePart({
   modelAnswer,
   type,
   saved,
-  hasApiKey,
   onGraded,
 }: {
   label: string
@@ -248,7 +247,6 @@ function SubjectivePart({
   modelAnswer: string
   type: 'saq' | 'reflect' | 'skill'
   saved?: QuizPartGrade
-  hasApiKey: boolean
   onGraded: (result: QuizPartGrade) => void
 }) {
   const [answer, setAnswer] = useState(saved?.answer ?? '')
@@ -259,13 +257,6 @@ function SubjectivePart({
 
   async function handleGrade() {
     if (!answer.trim() || loading) return
-    if (!hasApiKey) {
-      setShowModel(true)
-      const grade: QuizPartGrade = { answer, score: 0, ai_feedback: '(No API Key — please self-assess against the model answer)' }
-      setResult(grade)
-      onGraded(grade)
-      return
-    }
     setLoading(true)
     setError(null)
     try {
@@ -358,7 +349,6 @@ export function TopicQuiz({ quizData, topicId }: Props) {
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null)
   const [loadingAttempt, setLoadingAttempt] = useState(true)
   const [redoKey, setRedoKey] = useState(0)
-  const hasApiKey = typeof window !== 'undefined' && !!StorageService.apiKey.get()
 
   // Load existing attempt
   useEffect(() => {
@@ -483,7 +473,6 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                         modelAnswer={quizData.saq_model_answers?.[partKey(part.part)] ?? ''}
                         type="saq"
                         saved={attempt?.saq_parts?.[i]}
-                        hasApiKey={hasApiKey}
                         onGraded={grade => {
                           const parts = [...(attempt?.saq_parts ?? [])]
                           parts[i] = grade
@@ -508,7 +497,6 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                     modelAnswer={quizData.reflect_model_answer ?? ''}
                     type="reflect"
                     saved={attempt?.reflect}
-                    hasApiKey={hasApiKey}
                     onGraded={grade => saveAttempt({ reflect: grade })}
                   />
                 </div>
@@ -536,7 +524,6 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                     modelAnswer={quizData.skill_model_answers?.[i] ?? ''}
                     type="skill"
                     saved={attempt?.skill_parts?.[i]}
-                    hasApiKey={hasApiKey}
                     onGraded={grade => {
                       const parts = [...(attempt?.skill_parts ?? [])]
                       parts[i] = grade

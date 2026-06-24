@@ -107,7 +107,7 @@
       "heimler_playlist": "https://www.youtube.com/playlist?list=PLEHRHjICEfDWDNjJgvnNTHfUFv3Sgjgb6",
       "fiveable_url": "https://fiveable.me/ap-euro/unit-1",
       "tom_richey_url": "https://www.tomrichey.net/renaissance.html",
-      "topic_count": 10,
+      "topic_count": 11,
       "topics": [
         {
           "id": "1.1",
@@ -754,6 +754,47 @@
           ],
           "textbook_page": 66,
           "pdf_page": 112
+        },
+        {
+          "id": "1.11",
+          "title": "Causation in the Renaissance and the Age of Discovery",
+          "type": "skill_synthesis",
+          "amsco_chapter": "Topic 1.11 Causation in the Renaissance and the Age of Discovery",
+          "resources": [
+            {
+              "id": "fiveable-guide-1.11",
+              "type": "study_guide",
+              "source": "fiveable",
+              "title": "Fiveable Study Guide",
+              "url": "https://fiveable.me/ap-euro/unit-1",
+              "paid": false,
+              "timing": "topic",
+              "layer": "A",
+              "note": "Skill synthesis Topic focused on causation; use the Unit 1 guide to review Renaissance and exploration evidence."
+            },
+            {
+              "id": "college-board-ced-1.11",
+              "type": "ced_reference",
+              "source": "college_board",
+              "title": "College Board CED: Topic 1.11",
+              "url": "https://apcentral.collegeboard.org/media/pdf/ap-european-history-course-and-exam-description.pdf",
+              "paid": false,
+              "timing": "topic",
+              "layer": "A",
+              "note": "Official AP European History CED reference for the Unit 1 causation skill topic."
+            },
+            {
+              "id": "fiveable-1.11",
+              "type": "study_guide",
+              "source": "fiveable",
+              "title": "Fiveable Study Guide",
+              "url": "https://fiveable.me/ap-euro/unit-1",
+              "paid": false,
+              "timing": "topic",
+              "layer": "B",
+              "note": "Use for quick evidence review before answering the causation skill questions."
+            }
+          ]
         }
       ],
       "unit_resources": [

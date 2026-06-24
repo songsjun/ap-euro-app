@@ -1,6 +1,41 @@
 import { getDb } from '@/lib/infra/db'
-import type { Resource, TopicMeta, Completion, TopicUnlock, QuizAttempt } from '@/lib/types'
+import type { Resource, TopicMeta, Completion, QuizAttempt, QuizAttemptMutation, QuizPartGrade } from '@/lib/types'
 import type { IRepository } from './interface'
+
+function mergePartArray(
+  current: Array<QuizPartGrade | null> | undefined,
+  patch: Array<QuizPartGrade | null> | undefined,
+): Array<QuizPartGrade | null> | undefined {
+  if (!patch) return current
+  const next = [...(current ?? [])]
+  patch.forEach((part, index) => {
+    if (part) next[index] = part
+  })
+  return next
+}
+
+function mergeQuizAttempt(current: QuizAttempt | null, patch: QuizAttemptMutation): QuizAttempt {
+  if (patch.reset) {
+    return {
+      user_id: patch.user_id,
+      topic_id: patch.topic_id,
+      attempted_at: patch.attempted_at,
+    }
+  }
+
+  return {
+    ...current,
+    user_id: patch.user_id,
+    topic_id: patch.topic_id,
+    attempted_at: patch.attempted_at,
+    mcq_score: patch.mcq_score ?? current?.mcq_score,
+    mcq_total: patch.mcq_total ?? current?.mcq_total,
+    mcq_answers: patch.mcq_answers ?? current?.mcq_answers,
+    saq_parts: mergePartArray(current?.saq_parts, patch.saq_parts),
+    reflect: patch.reflect ?? current?.reflect,
+    skill_parts: mergePartArray(current?.skill_parts, patch.skill_parts),
+  }
+}
 
 export class DexieRepository implements IRepository {
   async getTopicResources(unit: number, topicId: string, layer: 'A' | 'B' | 'C'): Promise<Resource[]> {
@@ -77,8 +112,10 @@ export class DexieRepository implements IRepository {
     return (await getDb().quiz_attempts.get([userId, topicId])) ?? null
   }
 
-  async saveQuizAttempt(attempt: QuizAttempt): Promise<void> {
-    await getDb().quiz_attempts.put(attempt)
+  async saveQuizAttempt(attempt: QuizAttemptMutation): Promise<void> {
+    const db = getDb()
+    const current = (await db.quiz_attempts.get([attempt.user_id, attempt.topic_id])) ?? null
+    await db.quiz_attempts.put(mergeQuizAttempt(current, attempt))
   }
 
   async transact(fn: () => Promise<void>): Promise<void> {

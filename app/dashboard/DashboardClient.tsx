@@ -12,7 +12,6 @@ interface UnitProgress {
   completed: number
   total: number
   unlocked: boolean
-  reviewUnlocked: boolean
 }
 
 export function DashboardClient() {
@@ -54,7 +53,6 @@ export function DashboardClient() {
           completed: completedTopics,
           total: UNIT_TOPIC_COUNTS[unit] ?? 0,
           unlocked: unlockedSet.has(`${unit}.1`),
-          reviewUnlocked: unlockedSet.has(`unit-${unit}-review`),
         })
       }
       setUnitProgress(progress)
@@ -108,7 +106,7 @@ export function DashboardClient() {
               <div key={i} className="h-16 bg-stone-100 dark:bg-stone-800 rounded-xl animate-pulse" />
             ))
           ) : (
-            unitProgress.map(({ unit, completed, total, unlocked, reviewUnlocked }) => {
+            unitProgress.map(({ unit, completed, total, unlocked }) => {
               const pct = total > 0 ? (completed / total) * 100 : 0
               const isDone = completed === total && total > 0
               const isCurrent = unlocked && !isDone

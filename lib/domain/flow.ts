@@ -3,8 +3,12 @@ import type { FlowState, TopicSnapshot } from '@/lib/types'
 export function computeFlowState(snapshot: TopicSnapshot): FlowState {
   if (!snapshot.isUnlocked) return { phase: 'LOCKED' }
 
-  const done = snapshot.aResources.filter(r => snapshot.completions.has(r.id))
-  const firstIncomplete = snapshot.aResources.find(r => !snapshot.completions.has(r.id))
+  const isDone = (resourceId: string) => {
+    const completion = snapshot.completions.get(resourceId)
+    return completion !== undefined && completion.status !== 'skipped'
+  }
+  const done = snapshot.aResources.filter(r => isDone(r.id))
+  const firstIncomplete = snapshot.aResources.find(r => !isDone(r.id))
 
   if (firstIncomplete) {
     return {

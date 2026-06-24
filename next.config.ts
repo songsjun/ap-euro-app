@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  allowedDevOrigins: ['euro.kapy.ca'],
   images: { unoptimized: true },
 }
 

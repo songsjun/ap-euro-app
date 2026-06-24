@@ -8,8 +8,6 @@ import { exportData, importData, downloadJson } from '@/lib/app/share'
 import type { ExportData } from '@/lib/types'
 
 export function SettingsClient() {
-  const [apiKey, setApiKey] = useState('')
-  const [savedKey, setSavedKey] = useState<string | null>(null)
   const [theme, setTheme] = useState<ThemePreference>('system')
   const [exportStatus, setExportStatus] = useState<'idle' | 'loading' | 'done'>('idle')
   const [importStatus, setImportStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
@@ -18,23 +16,9 @@ export function SettingsClient() {
 
   useEffect(() => {
     ensureAppReady().then(() => {
-      setSavedKey(StorageService.apiKey.get())
       setTheme(StorageService.theme.get())
     }).catch(console.error)
   }, [])
-
-  function handleSaveKey() {
-    const trimmed = apiKey.trim()
-    if (!trimmed) return
-    StorageService.apiKey.save(trimmed)
-    setSavedKey(trimmed)
-    setApiKey('')
-  }
-
-  function handleClearKey() {
-    StorageService.apiKey.clear()
-    setSavedKey(null)
-  }
 
   function handleTheme(t: ThemePreference) {
     setTheme(t)
@@ -85,10 +69,6 @@ export function SettingsClient() {
     e.target.value = ''
   }
 
-  const maskedKey = savedKey
-    ? `${savedKey.slice(0, 8)}${'·'.repeat(Math.min(20, savedKey.length - 8))}`
-    : null
-
   return (
     <div className="min-h-screen">
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-stone-900/90 backdrop-blur border-b border-stone-100 dark:border-stone-800">
@@ -121,38 +101,14 @@ export function SettingsClient() {
           </div>
         </Section>
 
-        {/* API Key */}
-        <Section title="Claude API Key (Optional)">
+        {/* AI gateway */}
+        <Section title="AI Gateway">
           <p className="text-xs text-stone-400 dark:text-stone-500 mb-3">
-            Add your key to receive AI study feedback when completing a Topic. The key is stored locally in your browser only.
+            AI grading and study feedback are provided by the local AOPS AI Gateway. No model key is stored in the browser.
           </p>
-          {savedKey ? (
-            <div className="flex items-center gap-2">
-              <code className="flex-1 text-xs bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 px-3 py-2 rounded-lg font-mono truncate">
-                {maskedKey}
-              </code>
-              <button onClick={handleClearKey}
-                className="text-xs text-red-500 hover:text-red-700 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2 transition-colors">
-                Clear
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="password"
-                value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
-                placeholder="sk-ant-..."
-                className="flex-1 text-sm border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <button
-                onClick={handleSaveKey}
-                disabled={!apiKey.trim()}
-                className="text-sm bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg px-4 py-2 transition-colors">
-                Save
-              </button>
-            </div>
-          )}
+          <p className="text-xs text-stone-400 dark:text-stone-500">
+            Local deployment requires the <code className="font-mono">aops_calculus</code> AI gateway and AP AI proxy to be running.
+          </p>
         </Section>
 
         {/* Data */}
@@ -203,7 +159,7 @@ export function SettingsClient() {
         <Section title="About">
           <p className="text-xs text-stone-400 dark:text-stone-500">
             AP European History Adaptive Learning Platform<br />
-            All data is stored locally in your browser&apos;s IndexedDB. No personal information is uploaded.
+            Your signed-in progress is stored in the local PostgreSQL database. Curriculum content is cached in browser storage for fast access.
           </p>
         </Section>
 

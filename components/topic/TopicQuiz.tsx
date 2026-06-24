@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { QuizTopicData, QuizAttempt, QuizPartGrade } from '@/lib/types'
+import type { QuizTopicData, QuizAttempt, QuizAttemptMutation, QuizPartGrade } from '@/lib/types'
 import { StorageService } from '@/lib/infra/storage'
 import { gradeSubjectiveAnswer } from '@/lib/infra/ai'
 import { repo } from '@/lib/repository'
@@ -10,6 +10,40 @@ import { repo } from '@/lib/repository'
 
 function partKey(part: string): keyof { part_a: string; part_b: string; part_c: string } {
   return `part_${part}` as 'part_a' | 'part_b' | 'part_c'
+}
+
+function mergePartArray(
+  current: Array<QuizPartGrade | null> | undefined,
+  patch: Array<QuizPartGrade | null> | undefined,
+): Array<QuizPartGrade | null> | undefined {
+  if (!patch) return current
+  const next = [...(current ?? [])]
+  patch.forEach((part, index) => {
+    if (part) next[index] = part
+  })
+  return next
+}
+
+function mergeAttempt(current: QuizAttempt | null, patch: QuizAttemptMutation): QuizAttempt {
+  if (patch.reset) {
+    return {
+      user_id: patch.user_id,
+      topic_id: patch.topic_id,
+      attempted_at: patch.attempted_at,
+    }
+  }
+
+  return {
+    user_id: patch.user_id,
+    topic_id: patch.topic_id,
+    attempted_at: patch.attempted_at,
+    mcq_score: patch.mcq_score ?? current?.mcq_score,
+    mcq_total: patch.mcq_total ?? current?.mcq_total,
+    mcq_answers: patch.mcq_answers ?? current?.mcq_answers,
+    saq_parts: mergePartArray(current?.saq_parts, patch.saq_parts),
+    reflect: patch.reflect ?? current?.reflect,
+    skill_parts: mergePartArray(current?.skill_parts, patch.skill_parts),
+  }
 }
 
 // ── MCQ Section ───────────────────────────────────────────────────────────────
@@ -23,7 +57,7 @@ function MCQSection({
   quizData: QuizTopicData
   savedAnswers?: string[]
   savedScore?: number
-  onSubmit: (answers: string[], score: number) => void
+  onSubmit: (answers: string[], score: number) => Promise<void>
 }) {
   const questions = quizData.mcq_questions ?? []
   const correctAnswers = quizData.mcq_answers ?? []
@@ -33,15 +67,25 @@ function MCQSection({
       : {}
   )
   const [submitted, setSubmitted] = useState(!!savedAnswers)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const allAnswered = questions.length > 0 && questions.every(q => selected[q.num])
 
-  function handleSubmit() {
-    if (!allAnswered) return
+  async function handleSubmit() {
+    if (!allAnswered || saving) return
     const answers = questions.map(q => selected[q.num] ?? '')
     const score = answers.filter((a, i) => a === correctAnswers[i]).length
-    setSubmitted(true)
-    onSubmit(answers, score)
+    setSaving(true)
+    setError(null)
+    try {
+      await onSubmit(answers, score)
+      setSubmitted(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save answers')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const stimulus = quizData.mcq_stimulus_text
@@ -134,11 +178,12 @@ function MCQSection({
       {!submitted && (
         <button
           onClick={handleSubmit}
-          disabled={!allAnswered}
+          disabled={!allAnswered || saving}
           className="mt-4 w-full py-2 rounded-lg text-sm font-medium bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 hover:bg-stone-700 dark:hover:bg-stone-300 disabled:opacity-40 transition-colors">
-          Submit Answers
+          {saving ? 'Saving…' : 'Submit Answers'}
         </button>
       )}
+      {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
 
       {submitted && (
         <div className="mt-3 text-center">
@@ -238,7 +283,6 @@ function SubjectivePart({
   modelAnswer,
   type,
   saved,
-  hasApiKey,
   onGraded,
 }: {
   label: string
@@ -248,8 +292,7 @@ function SubjectivePart({
   modelAnswer: string
   type: 'saq' | 'reflect' | 'skill'
   saved?: QuizPartGrade
-  hasApiKey: boolean
-  onGraded: (result: QuizPartGrade) => void
+  onGraded: (result: QuizPartGrade) => Promise<void>
 }) {
   const [answer, setAnswer] = useState(saved?.answer ?? '')
   const [result, setResult] = useState<QuizPartGrade | null>(saved ?? null)
@@ -259,23 +302,16 @@ function SubjectivePart({
 
   async function handleGrade() {
     if (!answer.trim() || loading) return
-    if (!hasApiKey) {
-      setShowModel(true)
-      const grade: QuizPartGrade = { answer, score: 0, ai_feedback: '(No API Key — please self-assess against the model answer)' }
-      setResult(grade)
-      onGraded(grade)
-      return
-    }
     setLoading(true)
     setError(null)
     try {
       const { score, feedback } = await gradeSubjectiveAnswer(question, modelAnswer, answer, type)
       const grade: QuizPartGrade = { answer, score, ai_feedback: feedback }
+      await onGraded(grade)
       setResult(grade)
       setShowModel(true)
-      onGraded(grade)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'AI grading failed')
+      setError(e instanceof Error ? e.message : 'AI grading or save failed')
     }
     setLoading(false)
   }
@@ -358,7 +394,8 @@ export function TopicQuiz({ quizData, topicId }: Props) {
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null)
   const [loadingAttempt, setLoadingAttempt] = useState(true)
   const [redoKey, setRedoKey] = useState(0)
-  const hasApiKey = typeof window !== 'undefined' && !!StorageService.apiKey.get()
+  const [savingAttempt, setSavingAttempt] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   // Load existing attempt
   useEffect(() => {
@@ -369,28 +406,51 @@ export function TopicQuiz({ quizData, topicId }: Props) {
       .catch(() => setLoadingAttempt(false))
   }, [topicId])
 
-  const saveAttempt = useCallback(async (updated: Partial<QuizAttempt>) => {
+  const saveAttempt = useCallback(async (updated: Partial<QuizAttemptMutation>) => {
     const userId = StorageService.userId.get()
     if (!userId) return
-    const merged: QuizAttempt = {
+    const mutation: QuizAttemptMutation = {
       user_id: userId,
       topic_id: topicId,
       attempted_at: new Date().toISOString(),
-      ...attempt,
       ...updated,
     }
-    setAttempt(merged)
-    await repo.saveQuizAttempt(merged)
-  }, [attempt, topicId])
+    setSavingAttempt(true)
+    setSaveError(null)
+    try {
+      await repo.saveQuizAttempt(mutation)
+      setAttempt(current => mergeAttempt(current, mutation))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not save quiz attempt'
+      setSaveError(message)
+      throw error
+    } finally {
+      setSavingAttempt(false)
+    }
+  }, [topicId])
 
   const handleRedo = useCallback(async () => {
+    if (savingAttempt) return
     const userId = StorageService.userId.get()
     if (!userId) return
-    const blank: QuizAttempt = { user_id: userId, topic_id: topicId, attempted_at: new Date().toISOString() }
-    setAttempt(blank)
-    await repo.saveQuizAttempt(blank)
-    setRedoKey(k => k + 1)
-  }, [topicId])
+    const blank: QuizAttemptMutation = {
+      user_id: userId,
+      topic_id: topicId,
+      attempted_at: new Date().toISOString(),
+      reset: true,
+    }
+    setSavingAttempt(true)
+    setSaveError(null)
+    try {
+      await repo.saveQuizAttempt(blank)
+      setAttempt(mergeAttempt(null, blank))
+      setRedoKey(k => k + 1)
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Could not reset quiz attempt')
+    } finally {
+      setSavingAttempt(false)
+    }
+  }, [savingAttempt, topicId])
 
   if (loadingAttempt) return null
 
@@ -406,10 +466,10 @@ export function TopicQuiz({ quizData, topicId }: Props) {
     if (!attempt) return null
     const parts: string[] = []
     if (attempt.mcq_score !== undefined) parts.push(`MCQ ${attempt.mcq_score}/${attempt.mcq_total}`)
-    const saqDone = attempt.saq_parts?.filter(p => p.score !== undefined).length ?? 0
-    if (saqDone > 0) parts.push(`SAQ ${attempt.saq_parts?.reduce((s, p) => s + p.score, 0)}/${saqDone}`)
-    const skillDone = attempt.skill_parts?.filter(p => p.score !== undefined).length ?? 0
-    if (skillDone > 0) parts.push(`${attempt.skill_parts?.reduce((s, p) => s + p.score, 0)}/${skillDone}`)
+    const saqDone = attempt.saq_parts?.filter(p => p && p.score !== undefined).length ?? 0
+    if (saqDone > 0) parts.push(`SAQ ${attempt.saq_parts?.reduce((s, p) => s + (p?.score ?? 0), 0)}/${saqDone}`)
+    const skillDone = attempt.skill_parts?.filter(p => p && p.score !== undefined).length ?? 0
+    if (skillDone > 0) parts.push(`${attempt.skill_parts?.reduce((s, p) => s + (p?.score ?? 0), 0)}/${skillDone}`)
     return parts.length > 0 ? parts.join(' · ') : null
   })()
 
@@ -439,14 +499,16 @@ export function TopicQuiz({ quizData, topicId }: Props) {
         {attemptSummary && (
           <button
             onClick={handleRedo}
-            className="ml-3 shrink-0 text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors">
-            Redo
+            disabled={savingAttempt}
+            className="ml-3 shrink-0 text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 border border-stone-200 dark:border-stone-600 rounded px-2 py-0.5 transition-colors disabled:opacity-40">
+            {savingAttempt ? 'Saving…' : 'Redo'}
           </button>
         )}
       </div>
 
       {open && (
         <div className="border-t border-stone-100 dark:border-stone-700 px-4 py-4 space-y-6">
+          {saveError && <p className="text-xs text-red-500">{saveError}</p>}
 
           {/* CONTENT TYPE: MCQ + SAQ + Reflect */}
           {isContent && (
@@ -482,12 +544,11 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                         question={part.question}
                         modelAnswer={quizData.saq_model_answers?.[partKey(part.part)] ?? ''}
                         type="saq"
-                        saved={attempt?.saq_parts?.[i]}
-                        hasApiKey={hasApiKey}
+                        saved={attempt?.saq_parts?.[i] ?? undefined}
                         onGraded={grade => {
-                          const parts = [...(attempt?.saq_parts ?? [])]
+                          const parts: Array<QuizPartGrade | null> = []
                           parts[i] = grade
-                          saveAttempt({ saq_parts: parts })
+                          return saveAttempt({ saq_parts: parts })
                         }}
                       />
                     ))}
@@ -508,7 +569,6 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                     modelAnswer={quizData.reflect_model_answer ?? ''}
                     type="reflect"
                     saved={attempt?.reflect}
-                    hasApiKey={hasApiKey}
                     onGraded={grade => saveAttempt({ reflect: grade })}
                   />
                 </div>
@@ -535,12 +595,11 @@ export function TopicQuiz({ quizData, topicId }: Props) {
                     question={q}
                     modelAnswer={quizData.skill_model_answers?.[i] ?? ''}
                     type="skill"
-                    saved={attempt?.skill_parts?.[i]}
-                    hasApiKey={hasApiKey}
+                    saved={attempt?.skill_parts?.[i] ?? undefined}
                     onGraded={grade => {
-                      const parts = [...(attempt?.skill_parts ?? [])]
+                      const parts: Array<QuizPartGrade | null> = []
                       parts[i] = grade
-                      saveAttempt({ skill_parts: parts })
+                      return saveAttempt({ skill_parts: parts })
                     }}
                   />
                 ))}

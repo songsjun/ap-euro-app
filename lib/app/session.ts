@@ -39,7 +39,10 @@ export class TopicSessionManager {
       const snapshot = await this._buildSnapshot()
       const updatedCompletions = new Map(snapshot.completions)
       updatedCompletions.set(command.resourceId, completion)
-      const allADone = snapshot.aResources.every(r => updatedCompletions.has(r.id))
+      const allADone = snapshot.aResources.every(r => {
+        const current = updatedCompletions.get(r.id)
+        return current !== undefined && current.status !== 'skipped'
+      })
 
       await repo.transact(async () => {
         await repo.saveCompletion(completion)
@@ -47,6 +50,17 @@ export class TopicSessionManager {
           await handleTopicComplete(userId, sectionId, repo)
         }
       })
+
+      if (!allADone) {
+        const freshSnapshot = await this._buildSnapshot()
+        const freshAllADone = freshSnapshot.aResources.every(r => {
+          const current = freshSnapshot.completions.get(r.id)
+          return current !== undefined && current.status !== 'skipped'
+        })
+        if (freshAllADone) {
+          await handleTopicComplete(userId, sectionId, repo)
+        }
+      }
 
       if (gen !== this._gen) return this.getFlowState()
       return this.getFlowState()

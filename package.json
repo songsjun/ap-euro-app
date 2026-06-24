@@ -7,17 +7,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "content:check": "node scripts/check-content-coverage.mjs",
+    "db:schema": "node scripts/apply-schema.mjs",
+    "student:create": "node scripts/create-student.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.2",
     "next": "16.2.6",
+    "pg": "^8.21.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

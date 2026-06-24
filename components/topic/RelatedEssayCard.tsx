@@ -42,7 +42,7 @@ function resolveSgUrl(essay: EssayEntry): string | null {
   return essay.sg_url ?? null
 }
 
-export function RelatedEssayCard({ unit: _unit, topicId }: { unit: number; topicId: string }) {
+export function RelatedEssayCard({ topicId }: { unit: number; topicId: string }) {
   const [completions, setCompletions] = useState<Map<string, Completion>>(new Map())
   const [scores, setScores] = useState<Map<string, { score: string; editing: boolean }>>(new Map())
   const [saving, setSaving] = useState<string | null>(null)

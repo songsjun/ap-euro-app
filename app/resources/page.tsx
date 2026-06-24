@@ -28,7 +28,7 @@ const vm = videoMeta as Record<string, { duration: string | null }>
 // ── Utility ─────────────────────────────────────────────────────────────────
 
 function extractTopicId(name: string): string | null {
-  const m = name.match(/Topic\s+(\d+\.\d+)/i)
+  const m = name.match(/^(?:Topic\s+)?(\d+\.\d+)\b/i)
   return m ? m[1] : null
 }
 

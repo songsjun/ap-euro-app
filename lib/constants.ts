@@ -1,4 +1,4 @@
-export const CONTENT_VERSION = '1.1.0'
+export const CONTENT_VERSION = '1.1.1'
 export const UNITS = 9
 export const ESSAY_PASS_THRESHOLD = 0.6   // ≥60% on DBQ/LEQ/SAQ counts as passed
 
@@ -37,5 +37,5 @@ export const UNIT_TITLES: Record<number, string> = {
 
 // Topic counts per unit (for static param generation)
 export const UNIT_TOPIC_COUNTS: Record<number, number> = {
-  1: 10, 2: 8, 3: 8, 4: 7, 5: 9, 6: 10, 7: 9, 8: 11, 9: 15,
+  1: 11, 2: 8, 3: 8, 4: 7, 5: 9, 6: 10, 7: 9, 8: 11, 9: 15,
 }

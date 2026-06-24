@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "content:check": "node scripts/check-content-coverage.mjs",
     "db:schema": "node scripts/apply-schema.mjs",
     "student:create": "node scripts/create-student.mjs"
   },
